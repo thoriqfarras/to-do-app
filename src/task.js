@@ -14,30 +14,16 @@ export default class Task {
     this.priority = priority;
     this.note = note;
   }
-
-  // getters
-  getName() { return this.name };
-
-  getStatus() { return this.status };
-
-  getDue() { return this.due };
-
-  getProject() { return this.project };
-
-  getPriority() { return this.priority };
-
-  getNote() { return this.note };
-
-  // setters
-  setName(name) { this.name = name };
   
-  setStatus(status) { this.status = status };
-
-  setDue(due) { this.due = due};
-
-  setProject(project) { this.project = project };
-
-  setPriority(priority) { this.priority = priority };
-
-  setNote(note) { this.note = note };
+  edit({ ...args }) {
+    for (const [key, value] of Object.entries({ ...args })) {
+      if (key === 'name') {
+        const oldName = this.name;
+        console.log(`${key} of '${oldName}' updated to '${value}'`);
+      } else {
+        console.log(`${key} of '${this.name}' updated to '${value}'`);
+      }
+      this[key] = value;
+    }
+  }
 }

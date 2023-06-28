@@ -1,6 +1,5 @@
 import './style.css';
 import Task from './task.js';
-import Project from './project.js';
 import AppController from './app';
 
 const helloWorld = document.createElement('p');
@@ -10,36 +9,23 @@ helloWorld.style.color = 'red';
 document.body.appendChild(helloWorld);
 
 const app = AppController();
+const projects = app.getProjects();
 
-console.log(app.projects);
-
-app.addTask({
-  name: 'Work on Todo app',
+app.addTask(new Task({
+  name: 'Work on to do app',
   project: 'webdev',
-});
+  due: new Date(2023, 6, 30),
+}));
 
-console.log(app.projects);
+app.editTask(projects.at(1).getTasks().at(0), { status: 'done', name: 'create ui for to do app', due: new Date() });
+// app.removeTask(projects.at(1).tasks.at(0));
 
-app.addTask({
-  name: 'Commit latest change',
-  project: 'webdev',
-});
-
-console.log(app.projects);
-
-app.addTask({
-  name: 'drink 2 ltr of water',
+const mopHouse = new Task({
+  name: 'mop house',
   project: 'life',
 });
+app.addProject('life');
+app.addTask(mopHouse);
+app.removeTask(mopHouse);
 
-console.log(app.projects);
-
-app.addTask({
-  name: 'delete this',
-});
-
-console.log(app.projects);
-
-app.removeTask('delete this');
-
-console.log(app.projects);
+console.log(projects);
