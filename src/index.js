@@ -1,12 +1,14 @@
 import './style.css';
 import Task from './task.js';
 import AppController from './app';
+import {Sidebar} from './ui';
 
-const helloWorld = document.createElement('p');
-helloWorld.innerText = "Hello World!";
-helloWorld.style.color = 'red';
+const App = document.createElement('div');
+const sidebar = Sidebar();
+App.classList.add('app');
+App.appendChild(sidebar.sidebar);
 
-document.body.appendChild(helloWorld);
+document.body.appendChild(App); 
 
 const app = AppController();
 const projects = app.getProjects();
