@@ -23,6 +23,10 @@ html, body, .app {
   position: relative;
 }
 
+button {
+  cursor: pointer;
+}
+
 .app {
   display: flex;
 }

@@ -22,6 +22,7 @@
     "webpack-merge": "^5.9.0"
   },
   "dependencies": {
+    "date-fn": "^0.0.2",
     "lodash": "^4.17.21"
   }
 }

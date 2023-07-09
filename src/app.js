@@ -1,10 +1,12 @@
 import Project from './project.js';
+import Task from './task.js';
 
 export default function AppController() {
   let projects = [new Project('inbox')];
 
   // task controls
-  function addTask(task) {
+  function addTask(taskInfo) {
+    const task = new Task(taskInfo);
     let targetProject = projects.find(p => p.name === task.project);
     if (!targetProject) {
       console.log(`project '${task.project}' doesn't exist. creating...`);
@@ -26,6 +28,15 @@ export default function AppController() {
       }
     }
     console.log(`${task.name} is not found`);
+  }
+
+  function getAllTasks() {
+    let allTasks = [];
+    projects.forEach(project => {
+      const tasks = project.getTasks();
+      allTasks.push(...tasks);
+    });
+    return allTasks;
   }
 
   // project controls
