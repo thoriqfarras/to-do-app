@@ -1,6 +1,6 @@
 import './style.css';
 import Task from './task.js';
-import AppController from './app';
+import AppController from './todolist';
 import App from './ui.js';
 
 const app = App();

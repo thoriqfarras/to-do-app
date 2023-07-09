@@ -45,6 +45,10 @@ export default function AppController() {
     console.log(`project '${name}' added`);
   }
 
+  function editProject(project, newProjectName) {
+    project.edit(newProjectName);
+  }
+
   function getProjects() {
     return projects;
   }

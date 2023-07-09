@@ -4,9 +4,12 @@ export default class Project {
     this._tasks = [];
   }
 
-  getName() { return this.name };
-
-  setName(name) { this.name = name };
+  edit(newName) {
+    this.name = newName;
+    this._tasks.forEach(task => {
+      task.edit({ project: newName });
+    });
+  }
 
   addTask(task) {
     this._tasks.push(task);
