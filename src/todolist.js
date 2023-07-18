@@ -41,8 +41,16 @@ export default function AppController() {
 
   // project controls
   function addProject(name) {
+    if (getProjectNames().includes(name)) {
+      console.log(`project '${name}' already exists.`);
+      return 0;
+    } else if (!name) {
+      console.log('project name cannot be blank');
+      return -1;
+    }
     projects.push(new Project(name));
     console.log(`project '${name}' added`);
+    return 1;
   }
 
   function editProject(project, newProjectName) {
@@ -53,11 +61,16 @@ export default function AppController() {
     return projects;
   }
 
+  function getProjectNames() {
+    return projects.map(project => project.name);
+  }
+
   return {
     addTask,
     editTask,
     removeTask,
     addProject,
     getProjects,
+    getProjectNames,
   };
 }

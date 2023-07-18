@@ -30,17 +30,19 @@ export default function App() {
   
   clickHandlerSidebar(sidebar.sidebar);
   clickHandlerActionBtn(actionBtn);
-  clickHandlerPopup(popupTask);
-  clickHandlerPopup(popupProject);
+  clickHandlerPopup(popupTask, sidebar);
+  clickHandlerPopup(popupProject, sidebar);
   // closePopupHandler(popupTask.popup);
   // closePopupHandler(popupProject.popup);
+
+  console.log(todolist.getProjectNames());
 
   function clickHandlerSidebar(sidebar) {
     sidebar.addEventListener('click', (e) => {
       if (e.target.id === 'toggle-sidebar') {
         sidebar.classList.toggle('opened');
         sidebar.classList.toggle('closed');
-      }
+      } else {}
     });
   }
   
@@ -52,34 +54,34 @@ export default function App() {
       } else if (e.target.classList.contains('task')) {
         popupTask.toggle('add');
         app.appendChild(popupTask.popup);
+        popupTask.popup.querySelector('input').focus();
       } else if (e.target.classList.contains('project')) {
         popupProject.toggle('add');
         app.appendChild(popupProject.popup);
+        popupProject.popup.querySelector('input').focus();
       }
     });
   }
 
-  function closePopupHandler(popup) {
-    popup.addEventListener('click', (e) => {
-      if (e.target.id === 'cancel-btn' || e.target.classList.contains('overlay')) {
-        popup.remove();
-      }
-    });
-  }
-
-  function clickHandlerPopup(popupInstance) {
+  function clickHandlerPopup(popupInstance, sidebar) {
     const popup = popupInstance.popup;
     const popupType = popup.firstChild.id;
-    const state = popupInstance.state;
     popup.addEventListener('click', (e) => {
+      popupInstance.clearWarningMessage();
+      const state = popupInstance.getState();
       if (e.target.id === 'cancel-btn' || e.target.classList.contains('overlay')) {
         popup.remove();
       } else if (e.target.id === 'commit-btn') {
         if (popupType === 'popup-project') {
-          const projectName = popup.querySelector('input').value;
-          console.log(popupInstance.state);
+          const projectNameField = popup.querySelector('input');
           if (state === 'add') {
-            todolist.addProject(projectName);
+            const success = todolist.addProject(projectNameField.value);
+            if (success === 1) {
+              sidebar.loadProjectList(projects);
+              popup.remove();
+            } else {
+              popupInstance.loadWarningMessage(success, projectNameField.value, projectNameField);
+            }
           }
         }
       }

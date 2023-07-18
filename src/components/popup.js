@@ -14,7 +14,33 @@ export default function Popup() {
   const title = document.createElement('h2');
   popup.appendChild(title);
   
-  return { popup: overlay };
+  function loadWarningMessage(code, name, referenceNode) {
+    const msg = document.createElement('p');
+    msg.setAttribute('id', 'warning-msg');
+    switch (code) {
+      case -1:
+        msg.innerText = 'Project name cannot be blank';
+        break;
+      case 0:
+        msg.innerText = `'${name}' already exists`;
+        break;
+      default:
+        break;
+    }
+    msg.style.color = 'red';
+    msg.style.fontSize = '1rem';
+    referenceNode.parentElement.insertBefore(msg, referenceNode.nextSibling);
+  }
+
+  function clearWarningMessage() {
+    document.querySelector('#warning-msg')?.remove();
+  }
+
+  return { 
+    popup: overlay, 
+    loadWarningMessage,
+    clearWarningMessage,
+  };
 }
 
 export function PopupTask(projects) {
@@ -189,7 +215,7 @@ export function PopupTask(projects) {
     }
     state = mode;
   }
-  return { popup: overlay, state, toggle };
+  return { ...Popup(), popup: overlay, getState: () => { return state }, toggle };
 }
 
 export function PopupProject() {
@@ -230,7 +256,7 @@ export function PopupProject() {
   btnTwo.style.padding = '1rem 0';
   btnsWrapper.appendChild(btnOne);
   btnsWrapper.appendChild(btnTwo);
-  
+
   function toggle(mode) {
     if (mode === 'add') {
       title.innerText = 'Add a New Project';
@@ -240,7 +266,8 @@ export function PopupProject() {
       btnTwo.innerText = 'Save';      
     }
     state = mode;
+    console.log(state, mode);
   }
 
-  return { popup: overlay, state, toggle };
+  return { ...Popup(), popup: overlay, getState: () => { return state }, toggle };
 }

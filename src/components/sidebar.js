@@ -68,6 +68,9 @@ export default function Sidebar(projects) {
   sidebar.appendChild(projectList);
   
   function loadProjectList(projects) {
+    while (projectList.firstChild) {
+      projectList.removeChild(projectList.firstChild);
+    }
     for (const project of projects) {
       if (project.name === 'inbox') continue;
       const circle = document.createElement('div');
@@ -75,6 +78,9 @@ export default function Sidebar(projects) {
       const projectName = document.createElement('p');
       circle.classList.add('circle');
       projectName.innerText = project.name;
+      projectName.style.pointerEvents = 'none';
+      circle.style.pointerEvents = 'none';
+      projectAnchor.dataset.projectName = project.name;
       projectAnchor.appendChild(circle);
       projectAnchor.appendChild(projectName);
       projectList.appendChild(projectAnchor);
