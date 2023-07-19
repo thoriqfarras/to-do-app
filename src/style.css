@@ -112,8 +112,20 @@ li {
   height: 1.6rem;
 }
 
+.sidebar-main #edit-proj-btn {
+  margin-left: auto;
+}
+
 .sidebar-main a:hover {
   filter: brightness(0.9);
+}
+
+.sidebar-main a:hover > #edit-proj-btn {
+  filter: invert(72%) sepia(18%) saturate(189%) hue-rotate(179deg) brightness(89%) contrast(82%);
+}
+
+.sidebar-main a:hover > #edit-proj-btn:hover {
+  filter: brightness(0.7);
 }
 
 .circle {

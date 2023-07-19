@@ -17,6 +17,7 @@ export default function App() {
   let activeProject = projects[0];
   
   todolist.addTask({ name: 'mop the floor', priority: 2 });
+  todolist.addProject("Groceries");
   
   const sidebar = Sidebar(projects);
   const main = Main(activeProject);

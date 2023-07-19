@@ -2,6 +2,7 @@ import InboxSvg from './inbox-outline.svg';
 import TodaySvg from './calendar-today-outline.svg';
 import WeekSvg from './view-week-outline.svg';
 import LogbookSvg from './book-open-outline.svg';
+import EditSvg from './edit-task-icon.svg';
 import '../style.css';
 
 export default function Sidebar(projects) {
@@ -76,13 +77,17 @@ export default function Sidebar(projects) {
       const circle = document.createElement('div');
       const projectAnchor = document.createElement('a');
       const projectName = document.createElement('p');
+      const editBtn = document.createElement('img');
+      circle.style.pointerEvents = 'none';
       circle.classList.add('circle');
       projectName.innerText = project.name;
       projectName.style.pointerEvents = 'none';
-      circle.style.pointerEvents = 'none';
       projectAnchor.dataset.projectName = project.name;
+      editBtn.setAttribute('id', 'edit-proj-btn');
+      editBtn.setAttribute('src', EditSvg);
       projectAnchor.appendChild(circle);
       projectAnchor.appendChild(projectName);
+      projectAnchor.appendChild(editBtn);
       projectList.appendChild(projectAnchor);
     }
   }
