@@ -54,7 +54,20 @@ export default function AppController() {
   }
 
   function editProject(project, newProjectName) {
+    if (getProjectNames().filter(name => name != project.name).includes(newProjectName)) {
+      console.log(`${newProjectName} already exist`);
+      return 0;
+    } else if (!newProjectName) {
+      console.log('project name cannot be blank');
+      return -1;
+    }
+    const oldName = project.name;
     project.edit(newProjectName);
+    project.getTasks().forEach(task => {
+      task.edit({ project: newProjectName });
+    });
+    console.log(`'${oldName}' changed to '${newProjectName}': `, projects);
+    return 1;
   }
 
   function getProjects() {
@@ -70,6 +83,7 @@ export default function AppController() {
     editTask,
     removeTask,
     addProject,
+    editProject,
     getProjects,
     getProjectNames,
   };

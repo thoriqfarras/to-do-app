@@ -269,5 +269,15 @@ export function PopupProject() {
     console.log(state, mode);
   }
 
-  return { ...Popup(), popup: overlay, getState: () => { return state }, toggle };
+  function fillTitleField(titleText) {
+    projectTitle.value = titleText;
+  }
+
+  return { 
+    ...Popup(), 
+    popup: overlay, 
+    getState: () => { return state }, 
+    toggle,
+    fillTitleField,
+   };
 }

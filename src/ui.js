@@ -15,9 +15,12 @@ export default function App() {
   
   let projects = todolist.getProjects();
   let activeProject = projects[0];
+  let projectBeingEdited = {};
+  let taskBeingEdited = {};
   
   todolist.addTask({ name: 'mop the floor', priority: 2 });
   todolist.addProject("Groceries");
+  todolist.addTask({ name: 'mop the floor', priority: 2, project: 'Groceries' });
   
   const sidebar = Sidebar(projects);
   const main = Main(activeProject);
@@ -33,8 +36,6 @@ export default function App() {
   clickHandlerActionBtn(actionBtn);
   clickHandlerPopup(popupTask, sidebar);
   clickHandlerPopup(popupProject, sidebar);
-  // closePopupHandler(popupTask.popup);
-  // closePopupHandler(popupProject.popup);
 
   console.log(todolist.getProjectNames());
 
@@ -43,7 +44,14 @@ export default function App() {
       if (e.target.id === 'toggle-sidebar') {
         sidebar.classList.toggle('opened');
         sidebar.classList.toggle('closed');
-      } else {}
+      } else if (e.target.id === 'edit-proj-btn') {
+        const projectNameBeingEdited = e.target.parentElement.innerText;
+        projectBeingEdited = todolist.getProjects().find(project => project.name == projectNameBeingEdited);
+        popupProject.toggle('edit');
+        popupProject.fillTitleField(projectNameBeingEdited);
+        app.appendChild(popupProject.popup);
+        popupProject.popup.querySelector('input').focus();
+      }
     });
   }
   
@@ -77,6 +85,14 @@ export default function App() {
           const projectNameField = popup.querySelector('input');
           if (state === 'add') {
             const success = todolist.addProject(projectNameField.value);
+            if (success === 1) {
+              sidebar.loadProjectList(projects);
+              popup.remove();
+            } else {
+              popupInstance.loadWarningMessage(success, projectNameField.value, projectNameField);
+            }
+          } else if (state === "edit") {
+            const success = todolist.editProject(projectBeingEdited, projectNameField.value);
             if (success === 1) {
               sidebar.loadProjectList(projects);
               popup.remove();
