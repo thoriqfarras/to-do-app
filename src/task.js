@@ -3,7 +3,7 @@ export default class Task {
     name, 
     status = 'todo', 
     due, 
-    project = 'inbox', 
+    project = 'Inbox', 
     priority = 0, 
     note = ''
   }) {

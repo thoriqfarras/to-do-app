@@ -227,7 +227,7 @@ export function PopupProject() {
   popup.setAttribute('id', 'popup-project');
   popup.appendChild(title);
   
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 3; i++) {
     const wrapper = document.createElement('li');
     popup.appendChild(wrapper);
   }
@@ -242,7 +242,7 @@ export function PopupProject() {
   projectTitle.setAttribute('type', 'text');
   listItems[0].appendChild(projectTitleLabel);
   listItems[0].appendChild(projectTitle);
-  
+
   const btnsWrapper = listItems[listItems.length - 1];
   popup.appendChild(btnsWrapper);
   const btnOne = document.createElement('button');

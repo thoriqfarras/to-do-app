@@ -83,6 +83,7 @@ button {
 .sidebar-main li {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .sidebar-main:first-of-type {
@@ -129,10 +130,38 @@ li {
 }
 
 .circle {
+  height: 0.7rem;
+  width: 0.7rem;
+  border-radius: 100%;
+  cursor: pointer;
+  position: relative;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sidebar-main .project-color {
+  position: absolute;
+  top: 14px;
+  opacity: 0;
   width: 0.7rem;
   height: 0.7rem;
+  cursor: pointer;
+}
+::-webkit-color-swatch{
+  border: 0;
+  padding: 0;
   border-radius: 100%;
-  background-color: red;
+}
+
+::-moz-color-swatch,
+::-moz-focus-inner{
+  border: 0;
+  padding: 0;
+}
+
+::-moz-focus-inner{
+  border: 0;
+  padding: 0;
 }
 
 .main-content {
@@ -331,6 +360,10 @@ button:hover {
 .popup li:has(button) {
   flex-direction: row;
   gap: 4px;
+}
+
+.popup label {
+  align-self: flex-start;
 }
 
 .popup button {

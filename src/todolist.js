@@ -2,7 +2,12 @@ import Project from './project.js';
 import Task from './task.js';
 
 export default function AppController() {
-  let projects = [new Project('inbox')];
+  let projects = [
+    new Project('Inbox'),
+    new Project('Today'),
+    new Project('Next 7 days'),
+    new Project('Logbook'),
+  ];
 
   // task controls
   function addTask(taskInfo) {
@@ -40,7 +45,7 @@ export default function AppController() {
   }
 
   // project controls
-  function addProject(name) {
+  function addProject(name, color="") {
     if (getProjectNames().includes(name)) {
       console.log(`project '${name}' already exists.`);
       return 0;
@@ -48,12 +53,14 @@ export default function AppController() {
       console.log('project name cannot be blank');
       return -1;
     }
-    projects.push(new Project(name));
+    const newProject = new Project(name);
+    if (color) newProject.color = color;
+    projects.push(newProject);
     console.log(`project '${name}' added`);
     return 1;
   }
 
-  function editProject(project, newProjectName) {
+  function editProject(project, newProjectName, newColor) {
     if (getProjectNames().filter(name => name != project.name).includes(newProjectName)) {
       console.log(`${newProjectName} already exist`);
       return 0;
@@ -63,6 +70,7 @@ export default function AppController() {
     }
     const oldName = project.name;
     project.edit(newProjectName);
+    project.color = newColor;
     project.getTasks().forEach(task => {
       task.edit({ project: newProjectName });
     });

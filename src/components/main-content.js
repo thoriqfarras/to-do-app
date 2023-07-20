@@ -11,10 +11,19 @@ export default function Main(activeProject) {
   const tasksList = document.createElement('ul');
   tasksList.classList.add('tasks');
   
-  main.appendChild(pageTitle);
-  main.appendChild(tasksList);
-  
   function loadProject(activeProject) {
+
+    while (main.firstChild) {
+      main.removeChild(main.firstChild);
+    }
+
+    while (tasksList.firstChild) {
+      tasksList.removeChild(tasksList.firstChild);
+    }
+
+    main.appendChild(pageTitle);
+    main.appendChild(tasksList);
+
     if (activeProject.name === 'inbox') {
       pageTitle.innerText = capitalize(activeProject.name);
     } else {

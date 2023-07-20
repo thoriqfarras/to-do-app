@@ -36,14 +36,19 @@ export default function App() {
   clickHandlerActionBtn(actionBtn);
   clickHandlerPopup(popupTask, sidebar);
   clickHandlerPopup(popupProject, sidebar);
-
+  
   console.log(todolist.getProjectNames());
-
+  
   function clickHandlerSidebar(sidebar) {
     sidebar.addEventListener('click', (e) => {
       if (e.target.id === 'toggle-sidebar') {
         sidebar.classList.toggle('opened');
         sidebar.classList.toggle('closed');
+      } else if (e.target.classList.contains('project-item')) {
+        const targetProjectName = e.target.querySelector('p').innerText;
+        const targetProject = projects.find(project => project.name == targetProjectName);
+        activeProject = targetProject;
+        main.loadProject(activeProject);
       } else if (e.target.id === 'edit-proj-btn') {
         const projectNameBeingEdited = e.target.parentElement.innerText;
         projectBeingEdited = todolist.getProjects().find(project => project.name == projectNameBeingEdited);
@@ -51,8 +56,19 @@ export default function App() {
         popupProject.fillTitleField(projectNameBeingEdited);
         app.appendChild(popupProject.popup);
         popupProject.popup.querySelector('input').focus();
+      } else if (e.target.classList.contains('project-color')) {
+        e.target.addEventListener('change', changeProjectColor);
       }
     });
+    
+    function changeProjectColor(e) {
+      const circle = e.target.previousSibling;
+      const projectName = e.target.nextSibling.innerText;
+      const project = projects.find(p => p.name === projectName);
+      circle.style.backgroundColor = e.target.value;
+      project.color = e.target.value;
+      console.log(circle.previousSibling);
+    }
   }
   
   function clickHandlerActionBtn(actionBtn) {
@@ -71,7 +87,7 @@ export default function App() {
       }
     });
   }
-
+  
   function clickHandlerPopup(popupInstance, sidebar) {
     const popup = popupInstance.popup;
     const popupType = popup.firstChild.id;
