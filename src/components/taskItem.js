@@ -6,14 +6,15 @@ export default function TaskItem(task) {
   const taskItem = document.createElement('li');
   const taskWrapperMain = document.createElement('div');
   const taskWrapperInfo = document.createElement('div');
+  taskItem.classList.add('task-item');
   taskWrapperMain.classList.add('task-wrapper', 'main');
+  taskWrapperMain.style.pointerEvents = 'none'; 
   taskWrapperInfo.classList.add('task-wrapper', 'info');
-  taskItem.appendChild(taskWrapperMain);
-  taskItem.appendChild(taskWrapperInfo);
+  taskWrapperInfo.style.pointerEvents = 'none'; 
   
   const checkBox = document.createElement('input');
   checkBox.setAttribute('type', 'checkbox');
-  taskWrapperMain.appendChild(checkBox);
+  taskItem.appendChild(checkBox);
   
   const taskTitle = document.createElement('p');
   taskTitle.innerText = task.name;
@@ -46,6 +47,9 @@ export default function TaskItem(task) {
     dateTag.innerText = task.due;
     taskWrapperInfo.appendChild(dateTag);
   }
+  
+  taskItem.appendChild(taskWrapperMain);
+  taskItem.appendChild(taskWrapperInfo);
   
   return taskItem;
 }

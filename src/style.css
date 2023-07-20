@@ -238,7 +238,7 @@ footer img {
   border: 2px solid black;
 }
 
-.tasks input[type='checkbox']:checked + p {
+.tasks input[type='checkbox']:checked + .task-wrapper.main > p {
   text-decoration: line-through;
   color: var(--darker-gray)
 }

@@ -33,6 +33,7 @@ export default function App() {
   app.appendChild(actionBtn.wrapper);
   
   clickHandlerSidebar(sidebar.sidebar);
+  clickHandlerMain(main.main);
   clickHandlerActionBtn(actionBtn);
   clickHandlerPopup(popupTask, sidebar);
   clickHandlerPopup(popupProject, sidebar);
@@ -67,7 +68,6 @@ export default function App() {
       const project = projects.find(p => p.name === projectName);
       circle.style.backgroundColor = e.target.value;
       project.color = e.target.value;
-      console.log(circle.previousSibling);
     }
   }
   
@@ -117,6 +117,16 @@ export default function App() {
             }
           }
         }
+      }
+    });
+  }
+
+  function clickHandlerMain(main) {
+    main.addEventListener('click', (e) => {
+      console.log(e.target);
+      if (e.target.classList.contains('task-item')) {
+        popupTask.toggle('overview');
+        app.appendChild(popupTask.popup);
       }
     });
   }

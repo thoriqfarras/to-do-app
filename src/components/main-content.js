@@ -1,7 +1,6 @@
 import '../style.css';
 import TaskItem from './taskItem.js';
 import Footer from './footer.js';
-import { capitalize } from 'lodash';
 
 export default function Main(activeProject) {
   const main = document.createElement('main');
@@ -24,11 +23,7 @@ export default function Main(activeProject) {
     main.appendChild(pageTitle);
     main.appendChild(tasksList);
 
-    if (activeProject.name === 'inbox') {
-      pageTitle.innerText = capitalize(activeProject.name);
-    } else {
-      pageTitle.innerText = activeProject.name;
-    }
+    pageTitle.innerText = activeProject.name;
     
     const tasks = activeProject.getTasks();
     tasks.forEach(task => {
