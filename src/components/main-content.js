@@ -8,12 +8,15 @@ export default function Main(activeProject) {
   
   const pageTitle = document.createElement('h1');
   const tasksList = document.createElement('ul');
+  const footer = Footer();
   tasksList.classList.add('tasks');
   
   function loadProject(activeProject) {
 
     while (main.firstChild) {
+      // console.log(main.firstChild);
       main.removeChild(main.firstChild);
+      // break;
     }
 
     while (tasksList.firstChild) {
@@ -22,6 +25,7 @@ export default function Main(activeProject) {
 
     main.appendChild(pageTitle);
     main.appendChild(tasksList);
+    main.appendChild(footer);
 
     pageTitle.innerText = activeProject.name;
     
@@ -32,7 +36,6 @@ export default function Main(activeProject) {
   }
   
   loadProject(activeProject);
-  main.appendChild(Footer());
   
   return { main, loadProject };
 }

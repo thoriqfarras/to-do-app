@@ -114,6 +114,7 @@ export default function App() {
             if (success === 1) {
               sidebar.loadProjectList(projects);
               popup.remove();
+              if (activeProject === projectBeingEdited) main.loadProject(activeProject);
             } else {
               popupInstance.loadWarningMessage(success, projectNameField.value, projectNameField);
             }

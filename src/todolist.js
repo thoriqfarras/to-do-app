@@ -64,7 +64,7 @@ export default function AppController() {
     return 1;
   }
 
-  function editProject(project, newProjectName, newColor) {
+  function editProject(project, newProjectName) {
     if (getProjectNames().filter(name => name != project.name).includes(newProjectName)) {
       console.log(`${newProjectName} already exist`);
       return 0;
@@ -74,7 +74,6 @@ export default function AppController() {
     }
     const oldName = project.name;
     project.edit(newProjectName);
-    project.color = newColor;
     project.getTasks().forEach(task => {
       task.edit({ project: newProjectName });
     });
@@ -95,6 +94,10 @@ export default function AppController() {
     return projects.map(project => project.name);
   }
 
+  function getProjectByName(name) {
+    return projects.find(project => project.name === name);
+  }
+
   return {
     addTask,
     editTask,
@@ -103,6 +106,7 @@ export default function AppController() {
     editProject,
     getProjects,
     getProjectNames,
+    getProjectByName,
     getAllTasks,
     getTaskById,
   };
