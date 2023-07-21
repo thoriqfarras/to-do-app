@@ -1,13 +1,13 @@
 export default class Task {
   constructor({ 
-    name, 
+    title, 
     status = 'todo', 
     due, 
     project = 'Inbox', 
     priority = 0, 
     note = ''
   }) {
-    this.name = name;
+    this.title = title;
     this.status = status;
     this.due = due;
     this.project = project;
@@ -17,11 +17,11 @@ export default class Task {
   
   edit({ ...args }) {
     for (const [key, value] of Object.entries({ ...args })) {
-      if (key === 'name') {
-        const oldName = this.name;
-        console.log(`${key} of '${oldName}' updated to '${value}'`);
+      if (key === 'title') {
+        const oldTitle = this.title;
+        console.log(`${key} of '${oldTitle}' updated to '${value}'`);
       } else {
-        console.log(`${key} of '${this.name}' updated to '${value}'`);
+        console.log(`${key} of '${this.title}' updated to '${value}'`);
       }
       this[key] = value;
     }

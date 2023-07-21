@@ -19,23 +19,23 @@ export default function Popup() {
     msg.setAttribute('id', 'warning-msg');
     switch (code) {
       case -1:
-        msg.innerText = 'Project name cannot be blank';
-        break;
+      msg.innerText = 'Project name cannot be blank';
+      break;
       case 0:
-        msg.innerText = `'${name}' already exists`;
-        break;
+      msg.innerText = `'${name}' already exists`;
+      break;
       default:
-        break;
+      break;
     }
     msg.style.color = 'red';
     msg.style.fontSize = '1rem';
     referenceNode.parentElement.insertBefore(msg, referenceNode.nextSibling);
   }
-
+  
   function clearWarningMessage() {
-    document.querySelector('#warning-msg')?.remove();
+    popup.querySelector('#warning-msg')?.remove();
   }
-
+  
   return { 
     popup: overlay, 
     loadWarningMessage,
@@ -45,7 +45,7 @@ export default function Popup() {
 
 export function PopupTask(projects) {
   let state = '';
-
+  
   const overlay = Popup().popup;
   const popup = overlay.querySelector('.popup');
   const title = popup.querySelector('h2');
@@ -58,6 +58,14 @@ export function PopupTask(projects) {
   }
   
   const listItems = popup.querySelectorAll('li');
+  
+  const statusWrapper = document.createElement('li');
+  const statusLabel = document.createElement('p');
+  const status = document.createElement('span');
+  statusLabel.innerText = 'Status: ';
+  statusLabel.style.color = 'gray';
+  statusLabel.appendChild(status);
+  statusWrapper.appendChild(statusLabel);
   
   const taskTitleLabel = document.createElement('label');
   const taskTitle = document.createElement('input');
@@ -77,12 +85,21 @@ export function PopupTask(projects) {
   listItems[1].appendChild(taskProjectLabel);
   listItems[1].appendChild(taskProject);
   
-  projects.forEach(project => {
+  for (const project of projects) {
+    if (
+      project.name === 'Today' ||
+      project.name === 'Next 7 days' ||
+      project.name === 'Logbook'
+    ) continue;
     const projectOption = document.createElement('option');
     projectOption.setAttribute('value', project.name);
     projectOption.innerText = project.name;
     taskProject.appendChild(projectOption);
-  });
+  }
+  const addNewProjectOption = document.createElement('option');
+  addNewProjectOption.setAttribute('value', 'add-new');
+  addNewProjectOption.innerText = '+ Add new project...';
+  taskProject.appendChild(addNewProjectOption);
   
   const taskDueLabel = document.createElement('label');
   const taskDue = document.createElement('input');
@@ -107,26 +124,26 @@ export function PopupTask(projects) {
     priorityOption.setAttribute('value', i);
     switch (i) {
       case 0:
-      priorityOption.innerText = 'None';
-      break;
-      case 1:
-      priorityOption.innerText = 'Low';
-      break;
-      case 2:
-      priorityOption.innerText = 'Medium';
-      break;
-      case 3:
-      priorityOption.innerText = 'High';
-      break;
-      default:
-      break;
-    }
-    taskPriority.appendChild(priorityOption);
-  }
-  
-  const taskNoteLabel = document.createElement('label');
-  const taskNote = document.createElement('textarea');
-  taskNoteLabel.innerText = 'Note';
+        priorityOption.innerText = 'None';
+        break;
+        case 1:
+          priorityOption.innerText = 'Low';
+          break;
+          case 2:
+            priorityOption.innerText = 'Medium';
+            break;
+            case 3:
+              priorityOption.innerText = 'High';
+              break;
+              default:
+                break;
+              }
+              taskPriority.appendChild(priorityOption);
+            }
+            
+            const taskNoteLabel = document.createElement('label');
+            const taskNote = document.createElement('textarea');
+            taskNoteLabel.innerText = 'Note';
   taskNoteLabel.setAttribute('for', 'task-note');
   taskNote.setAttribute('rows', 20);
   taskNote.setAttribute('id', 'task-note');
@@ -165,6 +182,7 @@ export function PopupTask(projects) {
     });
     
     title.innerText = '';
+    statusWrapper.remove();
     
     popup.classList.add(mode);
     if (popup.classList.contains('overview')) {
@@ -176,15 +194,24 @@ export function PopupTask(projects) {
         field.disabled = true;
       });
       title.innerText = 'Task Overview';
+      status.innerText = 'to do';
+      status.style.color = 'red';
+      popup.insertBefore(statusWrapper, taskTitleLabel.parentElement);
       btnOne.setAttribute('id', 'delete-task-button');
       btnOne.style.backgroundColor = 'red';
-      btnOne.appendChild(deleteIcon);
+      btnOne.style.padding = '1rem 0';
+      // btnOne.appendChild(deleteIcon);
+      btnOne.innerText = 'Cancel';
       btnTwo.setAttribute('id', 'mark-task-done-button');
       btnTwo.style.backgroundColor = 'green';
-      btnTwo.appendChild(checkIcon);
+      btnTwo.style.padding = '1rem 0';
+      // btnTwo.appendChild(checkIcon);
+      btnTwo.innerText = 'Mark as done';
       btnThree.setAttribute('id', 'edit-task-button');
       btnThree.style.backgroundColor = 'blueviolet';
-      btnThree.appendChild(editIcon);
+      btnThree.style.padding = '1rem 0';
+      // btnThree.appendChild(editIcon);
+      btnThree.innerText = 'Edit';
       btnsWrapper.appendChild(btnOne);
       btnsWrapper.appendChild(btnTwo);
       btnsWrapper.appendChild(btnThree);
@@ -220,7 +247,7 @@ export function PopupTask(projects) {
 
 export function PopupProject() {
   let state = '';
-
+  
   const overlay = Popup().popup;
   const popup = overlay.querySelector('.popup');
   const title = popup.querySelector('h2');
@@ -242,7 +269,7 @@ export function PopupProject() {
   projectTitle.setAttribute('type', 'text');
   listItems[0].appendChild(projectTitleLabel);
   listItems[0].appendChild(projectTitle);
-
+  
   const btnsWrapper = listItems[listItems.length - 1];
   popup.appendChild(btnsWrapper);
   const btnOne = document.createElement('button');
@@ -256,7 +283,7 @@ export function PopupProject() {
   btnTwo.style.padding = '1rem 0';
   btnsWrapper.appendChild(btnOne);
   btnsWrapper.appendChild(btnTwo);
-
+  
   function toggle(mode) {
     if (mode === 'add') {
       title.innerText = 'Add a New Project';
@@ -268,16 +295,16 @@ export function PopupProject() {
     state = mode;
     console.log(state, mode);
   }
-
+  
   function fillTitleField(titleText) {
     projectTitle.value = titleText;
   }
-
+  
   return { 
     ...Popup(), 
     popup: overlay, 
     getState: () => { return state }, 
     toggle,
     fillTitleField,
-   };
+  };
 }

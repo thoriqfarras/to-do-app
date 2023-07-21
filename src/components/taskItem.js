@@ -17,7 +17,7 @@ export default function TaskItem(task) {
   taskItem.appendChild(checkBox);
   
   const taskTitle = document.createElement('p');
-  taskTitle.innerText = task.name;
+  taskTitle.innerText = task.title;
   taskWrapperMain.appendChild(taskTitle);
   
   if (task.note) {
@@ -50,6 +50,8 @@ export default function TaskItem(task) {
   
   taskItem.appendChild(taskWrapperMain);
   taskItem.appendChild(taskWrapperInfo);
+
+  taskItem.dataset.identifier = task;
   
   return taskItem;
 }

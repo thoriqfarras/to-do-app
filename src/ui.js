@@ -18,9 +18,9 @@ export default function App() {
   let projectBeingEdited = {};
   let taskBeingEdited = {};
   
-  todolist.addTask({ name: 'mop the floor', priority: 2 });
+  todolist.addTask({ title: 'mop the floor', priority: 2 });
   todolist.addProject("Groceries");
-  todolist.addTask({ name: 'mop the floor', priority: 2, project: 'Groceries' });
+  todolist.addTask({ title: 'mop the garage', priority: 1, project: 'Chores' });
   
   const sidebar = Sidebar(projects);
   const main = Main(activeProject);
@@ -77,6 +77,7 @@ export default function App() {
       if (e.target.classList.contains('plus')) {
         actionBtn.toggle();
       } else if (e.target.classList.contains('task')) {
+        resetFormFields(popupTask.popup);
         popupTask.toggle('add');
         app.appendChild(popupTask.popup);
         popupTask.popup.querySelector('input').focus();
@@ -116,6 +117,18 @@ export default function App() {
               popupInstance.loadWarningMessage(success, projectNameField.value, projectNameField);
             }
           }
+        } else if (popupType === 'popup-task') {
+          const formElements = getAllFormElements(popup);
+          const formValues = getAllFormValues(formElements);
+          for (let [key, value] of Object.entries(formValues)) {
+            const newKey = key.substring(5);
+            formValues[newKey] = formValues[key]
+            delete formValues[key];
+          }
+          console.log(formValues);
+          todolist.addTask(formValues);
+          main.loadProject(activeProject);
+          popup.remove();
         }
       }
     });
@@ -125,8 +138,35 @@ export default function App() {
     main.addEventListener('click', (e) => {
       console.log(e.target);
       if (e.target.classList.contains('task-item')) {
+        const formElements = getAllFormElements(popupTask.popup);
+        const taskInfo = getAllFormValues(formElements);
         popupTask.toggle('overview');
         app.appendChild(popupTask.popup);
+        console.log(e.target.dataset.identifier);
+      }
+    });
+  }
+
+  function getAllFormElements(source) {
+    return source.querySelectorAll('input, select, textarea');
+  }
+
+  function getAllFormValues(formElements) {
+    let obj = {};
+    formElements.forEach((element) => {
+      const key = element.id;
+      const value = element.value;
+      obj[key] = value;
+    });
+    return obj;
+  }
+
+  function resetFormFields(popup) {
+    popup.querySelectorAll('input, select, textarea').forEach(field => {
+      if (field.type === 'select-one') {
+        field.selectedIndex = 0;
+      } else {
+        field.value = '';
       }
     });
   }
