@@ -51,7 +51,7 @@ export default function TaskItem(task) {
   taskItem.appendChild(taskWrapperMain);
   taskItem.appendChild(taskWrapperInfo);
 
-  taskItem.dataset.identifier = task;
+  taskItem.dataset.id = task.getId();
   
   return taskItem;
 }

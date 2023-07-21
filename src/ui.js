@@ -38,7 +38,8 @@ export default function App() {
   clickHandlerPopup(popupTask, sidebar);
   clickHandlerPopup(popupProject, sidebar);
   
-  console.log(todolist.getProjectNames());
+  console.log(projects);
+  console.log(todolist.getAllTasks());
   
   function clickHandlerSidebar(sidebar) {
     sidebar.addEventListener('click', (e) => {
@@ -138,11 +139,12 @@ export default function App() {
     main.addEventListener('click', (e) => {
       console.log(e.target);
       if (e.target.classList.contains('task-item')) {
-        const formElements = getAllFormElements(popupTask.popup);
-        const taskInfo = getAllFormValues(formElements);
+        const taskId = +e.target.dataset.id;
+        const selectedTask = todolist.getTaskById(taskId);
         popupTask.toggle('overview');
+        fillFormFields(popupTask.popup, selectedTask);
         app.appendChild(popupTask.popup);
-        console.log(e.target.dataset.identifier);
+        console.log(selectedTask);
       }
     });
   }
@@ -169,5 +171,18 @@ export default function App() {
         field.value = '';
       }
     });
+  }
+
+  function fillFormFields(popup, task) {
+    const titleField = popup.querySelector('#task-title'); 
+    const projectField = popup.querySelector('#task-project'); 
+    const dueField = popup.querySelector('#task-due'); 
+    const priorityField = popup.querySelector('#task-priority'); 
+    const noteField = popup.querySelector('#task-note'); 
+    titleField.value = task.title;
+    projectField.value = task.project;
+    dueField.value = task.due;
+    priorityField.value = task.priority;
+    noteField.value = task.note;
   }
 }

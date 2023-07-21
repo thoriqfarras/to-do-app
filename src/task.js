@@ -1,5 +1,7 @@
 export default class Task {
+
   constructor({ 
+    id,
     title, 
     status = 'todo', 
     due, 
@@ -7,6 +9,7 @@ export default class Task {
     priority = 0, 
     note = ''
   }) {
+    this._id = id;
     this.title = title;
     this.status = status;
     this.due = due;
@@ -26,4 +29,6 @@ export default class Task {
       this[key] = value;
     }
   }
+
+  getId() { return this._id };
 }

@@ -1,17 +1,20 @@
 import Project from './project.js';
 import Task from './task.js';
 
+let taskIdCounter = 0;
+
 export default function AppController() {
-  let projects = [
-    new Project('Inbox'),
-    new Project('Today'),
-    new Project('Next 7 days'),
-    new Project('Logbook'),
-  ];
+
+  const inbox = new Project('Inbox');
+  const today = new Project('Today');
+  const nextWeek = new Project('Next 7 days');
+  const logbook = new Project('Logbook');
+
+  let projects = [inbox, today, nextWeek, logbook];
 
   // task controls
   function addTask(taskInfo) {
-    const task = new Task(taskInfo);
+    const task = new Task({ id: taskIdCounter, ...taskInfo });
     let targetProject = projects.find(p => p.name === task.project);
     if (!targetProject) {
       console.log(`project '${task.project}' doesn't exist. creating...`);
@@ -19,6 +22,7 @@ export default function AppController() {
       targetProject = projects.at(-1);
     }
     targetProject.addTask(task);
+    taskIdCounter++;
   }
 
   function editTask(task, { ...args }) {
@@ -78,6 +82,11 @@ export default function AppController() {
     return 1;
   }
 
+  function getTaskById(id) {
+    const allTasks = getAllTasks();
+    return allTasks.find(task => +task.getId() === +id);
+  }
+
   function getProjects() {
     return projects;
   }
@@ -94,5 +103,7 @@ export default function AppController() {
     editProject,
     getProjects,
     getProjectNames,
+    getAllTasks,
+    getTaskById,
   };
 }
