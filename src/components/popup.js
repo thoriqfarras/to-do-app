@@ -14,12 +14,12 @@ export default function Popup() {
   const title = document.createElement('h2');
   popup.appendChild(title);
   
-  function loadWarningMessage(code, name, referenceNode) {
+  function loadWarningMessage(code, referenceNode, name='') {
     const msg = document.createElement('p');
     msg.setAttribute('id', 'warning-msg');
     switch (code) {
       case -1:
-      msg.innerText = 'Project name cannot be blank';
+      msg.innerText = 'Title cannot be blank';
       break;
       case 0:
       msg.innerText = `'${name}' already exists`;
@@ -33,7 +33,7 @@ export default function Popup() {
   }
   
   function clearWarningMessage() {
-    popup.querySelector('#warning-msg')?.remove();
+    document.querySelector('#warning-msg')?.remove();
   }
   
   return { 

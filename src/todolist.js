@@ -14,6 +14,7 @@ export default function AppController() {
 
   // task controls
   function addTask(taskInfo) {
+    if (!taskInfo.title) return -1;
     const task = new Task({ id: taskIdCounter, ...taskInfo });
     let targetProject = projects.find(p => p.name === task.project);
     if (!targetProject) {
@@ -23,9 +24,11 @@ export default function AppController() {
     }
     targetProject.addTask(task);
     taskIdCounter++;
+    return 1;
   }
 
   function editTask(task, { ...args }) {
+    if (!args.title) return -1;
     const oldProjectName = task.project;
     task.edit({ ...args });
     if (oldProjectName !== task.project) {
@@ -34,6 +37,7 @@ export default function AppController() {
       newProject.addTask(task);
       oldProject.removeTask(task);
     }
+    return 1;
   }
 
   function removeTask(task) {

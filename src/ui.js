@@ -108,7 +108,7 @@ export default function App() {
               sidebar.loadProjectList(projects);
               popup.remove();
             } else {
-              popupInstance.loadWarningMessage(success, projectNameField.value, projectNameField);
+              popupInstance.loadWarningMessage(success, projectNameField, projectNameField.value);
             }
           } else if (state === "edit") {
             const success = todolist.editProject(projectBeingEdited, projectNameField.value);
@@ -117,7 +117,7 @@ export default function App() {
               popup.remove();
               if (activeProject === projectBeingEdited) main.loadProject(activeProject);
             } else {
-              popupInstance.loadWarningMessage(success, projectNameField.value, projectNameField);
+              popupInstance.loadWarningMessage(success, projectNameField, projectNameField.value);
             }
           }
         } else if (popupType === 'popup-task') {
@@ -125,13 +125,25 @@ export default function App() {
           const formValues = getAllFormValues(formElements);
           console.log(formValues);
           if (state === 'add') {
-            todolist.addTask(extractTaskInfo(formValues));
+            const success = todolist.addTask(extractTaskInfo(formValues));
+            if (success === 1) {
+              main.loadProject(activeProject);
+              popup.remove();
+            } else {
+              const taskTitleField = popup.querySelector('input');
+              popupInstance.loadWarningMessage(success, taskTitleField);
+            }
           } else if (state === 'edit') {
-            todolist.editTask(taskDisplayed, extractTaskInfo(formValues));
-            taskDisplayed = {};
+            const success = todolist.editTask(taskDisplayed, extractTaskInfo(formValues));
+            if (success === 1) {
+              main.loadProject(activeProject);
+              popup.remove();
+              taskDisplayed = {};
+            } else {
+              const taskTitleField = popup.querySelector('input');
+              popupInstance.loadWarningMessage(success, taskTitleField);
+            }
           }
-          main.loadProject(activeProject);
-          popup.remove();
         }
       } else if (e.target.id === 'edit-task-btn') {
         popupInstance.toggle('edit');
