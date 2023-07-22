@@ -122,13 +122,8 @@ export default function App() {
         } else if (popupType === 'popup-task') {
           const formElements = getAllFormElements(popup);
           const formValues = getAllFormValues(formElements);
-          for (let [key, value] of Object.entries(formValues)) {
-            const newKey = key.substring(5);
-            formValues[newKey] = formValues[key]
-            delete formValues[key];
-          }
           console.log(formValues);
-          todolist.addTask(formValues);
+          todolist.addTask(extractTaskInfo(formValues));
           main.loadProject(activeProject);
           popup.remove();
         }
@@ -185,5 +180,14 @@ export default function App() {
     dueField.value = task.due;
     priorityField.value = task.priority;
     noteField.value = task.note;
+  }
+
+  function extractTaskInfo(formValues) {
+    const extracted = {};
+    for (let [key, value] of Object.entries(formValues)) {
+      const newKey = key.substring(5);
+      extracted[newKey] = formValues[key];
+    }
+    return extracted;
   }
 }

@@ -201,7 +201,7 @@ export function PopupTask(projects) {
       btnOne.style.backgroundColor = 'red';
       btnOne.style.padding = '1rem 0';
       // btnOne.appendChild(deleteIcon);
-      btnOne.innerText = 'Cancel';
+      btnOne.innerText = 'Delete';
       btnTwo.setAttribute('id', 'mark-task-done-button');
       btnTwo.style.backgroundColor = 'green';
       btnTwo.style.padding = '1rem 0';
