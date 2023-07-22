@@ -16,6 +16,7 @@ export default function App() {
   let projects = todolist.getProjects();
   let activeProject = projects[0];
   let projectBeingEdited = {};
+  let taskDisplayed = {};
   let taskBeingEdited = {};
   
   todolist.addTask({ title: 'mop the floor', priority: 2 });
@@ -95,7 +96,7 @@ export default function App() {
     const popupType = popup.firstChild.id;
     popup.addEventListener('click', (e) => {
       popupInstance.clearWarningMessage();
-      const state = popupInstance.getState();
+      let state = popupInstance.getState();
       if (e.target.id === 'cancel-btn' || e.target.classList.contains('overlay')) {
         popup.remove();
       } else if (e.target.id === 'commit-btn') {
@@ -123,10 +124,19 @@ export default function App() {
           const formElements = getAllFormElements(popup);
           const formValues = getAllFormValues(formElements);
           console.log(formValues);
-          todolist.addTask(extractTaskInfo(formValues));
+          if (state === 'add') {
+            todolist.addTask(extractTaskInfo(formValues));
+          } else if (state === 'edit') {
+            todolist.editTask(taskDisplayed, extractTaskInfo(formValues));
+            taskDisplayed = {};
+          }
           main.loadProject(activeProject);
           popup.remove();
         }
+      } else if (e.target.id === 'edit-task-btn') {
+        popupInstance.toggle('edit');
+        state = popupInstance.getState();
+        console.log(state);
       }
     });
   }
@@ -137,6 +147,7 @@ export default function App() {
       if (e.target.classList.contains('task-item')) {
         const taskId = +e.target.dataset.id;
         const selectedTask = todolist.getTaskById(taskId);
+        taskDisplayed = selectedTask;
         popupTask.toggle('overview');
         fillFormFields(popupTask.popup, selectedTask);
         app.appendChild(popupTask.popup);

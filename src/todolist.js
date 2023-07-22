@@ -26,7 +26,14 @@ export default function AppController() {
   }
 
   function editTask(task, { ...args }) {
+    const oldProjectName = task.project;
     task.edit({ ...args });
+    if (oldProjectName !== task.project) {
+      const oldProject = getProjectByName(oldProjectName);
+      const newProject = getProjectByName(task.project);
+      newProject.addTask(task);
+      oldProject.removeTask(task);
+    }
   }
 
   function removeTask(task) {

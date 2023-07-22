@@ -173,41 +173,29 @@ export function PopupTask(projects) {
       btnsWrapper.removeChild(btnsWrapper.firstChild);
     }
     
-    listItems.forEach((child, index) => {
-      if (index === listItems.length - 1) {
-        return;
-      }
-      const field = child.children[1];
-      field.disabled = false;
-    });
+    enableFormFields();
     
     title.innerText = '';
     statusWrapper.remove();
     
     popup.classList.add(mode);
     if (popup.classList.contains('overview')) {
-      listItems.forEach((child, index) => {
-        if (index === listItems.length - 1) {
-          return;
-        }
-        const field = child.children[1];
-        field.disabled = true;
-      });
+      disableFormFields();
       title.innerText = 'Task Overview';
       status.innerText = 'to do';
       status.style.color = 'red';
       popup.insertBefore(statusWrapper, taskTitleLabel.parentElement);
-      btnOne.setAttribute('id', 'delete-task-button');
+      btnOne.setAttribute('id', 'delete-task-btn');
       btnOne.style.backgroundColor = 'red';
       btnOne.style.padding = '1rem 0';
       // btnOne.appendChild(deleteIcon);
       btnOne.innerText = 'Delete';
-      btnTwo.setAttribute('id', 'mark-task-done-button');
+      btnTwo.setAttribute('id', 'mark-task-done-btn');
       btnTwo.style.backgroundColor = 'green';
       btnTwo.style.padding = '1rem 0';
       // btnTwo.appendChild(checkIcon);
       btnTwo.innerText = 'Mark as done';
-      btnThree.setAttribute('id', 'edit-task-button');
+      btnThree.setAttribute('id', 'edit-task-btn');
       btnThree.style.backgroundColor = 'blueviolet';
       btnThree.style.padding = '1rem 0';
       // btnThree.appendChild(editIcon);
@@ -242,7 +230,35 @@ export function PopupTask(projects) {
     }
     state = mode;
   }
-  return { ...Popup(), popup: overlay, getState: () => { return state }, toggle };
+
+  function enableFormFields() {
+    listItems.forEach((child, index) => {
+      if (index === listItems.length - 1) {
+        return;
+      }
+      const field = child.children[1];
+      field.disabled = false;
+    });
+  }
+
+  function disableFormFields() {
+    listItems.forEach((child, index) => {
+      if (index === listItems.length - 1) {
+        return;
+      }
+      const field = child.children[1];
+      field.disabled = true;
+    });
+  }
+
+  return { 
+    ...Popup(), 
+    popup: overlay, 
+    getState: () => { return state }, 
+    toggle,
+    enableFormFields,
+    disableFormFields, 
+  };
 }
 
 export function PopupProject() {
