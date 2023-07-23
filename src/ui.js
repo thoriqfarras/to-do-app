@@ -164,6 +164,14 @@ export default function App() {
         fillFormFields(popupTask.popup, selectedTask);
         app.appendChild(popupTask.popup);
         console.log(selectedTask);
+      } else if (e.target.type === 'checkbox') {
+        const taskId = +e.target.parentElement.dataset.id;
+        const selectedTask = todolist.getTaskById(taskId);
+        if (selectedTask.status === 'todo') {
+          selectedTask.status = 'done';
+        } else {
+          selectedTask.status = 'todo';
+        }
       }
     });
   }
@@ -193,11 +201,18 @@ export default function App() {
   }
 
   function fillFormFields(popup, task) {
+    const statusIndicator = popup.querySelector('#task-status');
     const titleField = popup.querySelector('#task-title'); 
     const projectField = popup.querySelector('#task-project'); 
     const dueField = popup.querySelector('#task-due'); 
     const priorityField = popup.querySelector('#task-priority'); 
     const noteField = popup.querySelector('#task-note'); 
+    statusIndicator.value = task.status;
+    if (task.status === 'todo') {
+      statusIndicator.style.color = "red";
+    } else {
+      statusIndicator.style.color = "green";
+    }
     titleField.value = task.title;
     projectField.value = task.project;
     dueField.value = task.due;

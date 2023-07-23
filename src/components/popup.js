@@ -61,10 +61,11 @@ export function PopupTask(projects) {
   
   const statusWrapper = document.createElement('li');
   const statusLabel = document.createElement('p');
-  const status = document.createElement('span');
+  const status = document.createElement('input');
   statusLabel.innerText = 'Status: ';
   statusLabel.style.color = 'gray';
   statusLabel.appendChild(status);
+  status.setAttribute('id', 'task-status');
   statusWrapper.appendChild(statusLabel);
   
   const taskTitleLabel = document.createElement('label');
@@ -182,8 +183,16 @@ export function PopupTask(projects) {
     if (popup.classList.contains('overview')) {
       disableFormFields();
       title.innerText = 'Task Overview';
-      status.innerText = 'to do';
-      status.style.color = 'red';
+      status.disabled = true;
+      status.style.appearance = 'none';
+      status.style.backgroundColor = 'transparent';
+      status.style.border = '0';
+      status.style.fontSize = '1.4rem';
+      // if (status.value === 'todo') {
+      //   status.style.color = 'red';
+      // } else {
+      //   status.style.color = 'green';
+      // }
       popup.insertBefore(statusWrapper, taskTitleLabel.parentElement);
       btnOne.setAttribute('id', 'delete-task-btn');
       btnOne.style.backgroundColor = 'red';
