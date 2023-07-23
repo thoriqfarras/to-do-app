@@ -50,8 +50,10 @@ export default function App() {
       } else if (e.target.classList.contains('project-item')) {
         const targetProjectName = e.target.querySelector('p').innerText;
         const targetProject = projects.find(project => project.name == targetProjectName);
-        activeProject = targetProject;
-        main.loadProject(activeProject);
+        if (activeProject != targetProject) {
+          activeProject = targetProject;
+          main.loadProject(activeProject);
+        }
       } else if (e.target.id === 'edit-proj-btn') {
         const projectNameBeingEdited = e.target.parentElement.innerText;
         projectBeingEdited = todolist.getProjects().find(project => project.name == projectNameBeingEdited);

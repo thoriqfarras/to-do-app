@@ -188,30 +188,17 @@ export function PopupTask(projects) {
       status.style.backgroundColor = 'transparent';
       status.style.border = '0';
       status.style.fontSize = '1.4rem';
-      // if (status.value === 'todo') {
-      //   status.style.color = 'red';
-      // } else {
-      //   status.style.color = 'green';
-      // }
       popup.insertBefore(statusWrapper, taskTitleLabel.parentElement);
       btnOne.setAttribute('id', 'delete-task-btn');
       btnOne.style.backgroundColor = 'red';
       btnOne.style.padding = '1rem 0';
-      // btnOne.appendChild(deleteIcon);
       btnOne.innerText = 'Delete';
-      btnTwo.setAttribute('id', 'mark-task-done-btn');
-      btnTwo.style.backgroundColor = 'green';
+      btnTwo.setAttribute('id', 'edit-task-btn');
+      btnTwo.style.backgroundColor = 'blueviolet';
       btnTwo.style.padding = '1rem 0';
-      // btnTwo.appendChild(checkIcon);
-      btnTwo.innerText = 'Mark as done';
-      btnThree.setAttribute('id', 'edit-task-btn');
-      btnThree.style.backgroundColor = 'blueviolet';
-      btnThree.style.padding = '1rem 0';
-      // btnThree.appendChild(editIcon);
-      btnThree.innerText = 'Edit';
+      btnTwo.innerText = 'Edit';
       btnsWrapper.appendChild(btnOne);
       btnsWrapper.appendChild(btnTwo);
-      btnsWrapper.appendChild(btnThree);
     } else if (popup.classList.contains('edit')) {
       title.innerText = 'Edit Task';
       btnOne.setAttribute('id', 'cancel-btn');

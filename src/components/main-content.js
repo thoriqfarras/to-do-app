@@ -31,7 +31,9 @@ export default function Main(activeProject) {
     
     const tasks = activeProject.getTasks();
     tasks.forEach(task => {
-      tasksList.appendChild(new TaskItem(task));
+      if (task.status === 'todo') {
+        tasksList.appendChild(new TaskItem(task));
+      }
     });
   }
   
