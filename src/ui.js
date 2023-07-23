@@ -51,6 +51,11 @@ export default function App() {
         const targetProjectName = e.target.querySelector('p').innerText;
         const targetProject = projects.find(project => project.name == targetProjectName);
         if (activeProject != targetProject) {
+          if (targetProject.name === 'Today') {
+            todolist.updateToday();
+          } else if (targetProject.name === 'Next 7 days') {
+            todolist.updateNextWeek();
+          }
           activeProject = targetProject;
           main.loadProject(activeProject);
         }
@@ -186,12 +191,12 @@ export default function App() {
     let obj = {};
     formElements.forEach((element) => {
       const key = element.id;
-      const value = element.value;
+      let value = element.value;
       obj[key] = value;
     });
     return obj;
   }
-
+  
   function resetFormFields(popup) {
     popup.querySelectorAll('input, select, textarea').forEach(field => {
       if (field.type === 'select-one') {
@@ -201,7 +206,7 @@ export default function App() {
       }
     });
   }
-
+  
   function fillFormFields(popup, task) {
     const statusIndicator = popup.querySelector('#task-status');
     const titleField = popup.querySelector('#task-title'); 

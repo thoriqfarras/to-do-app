@@ -14,7 +14,7 @@ export default class Project {
 
   addTask(task) {
     this._tasks.push(task);
-    console.log(`${task.name} added to ${this.name}`);
+    console.log(`${task.title} added to ${this.name}`);
   }
 
   removeTask(task) {

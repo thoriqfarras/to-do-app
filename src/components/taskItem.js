@@ -1,6 +1,7 @@
 import '../style.css';
 import TaskNoteSvg from './text.svg';
 import Flag from './flag-variant.svg';
+import { format } from 'date-fns';
 
 export default function TaskItem(task) {
   const taskItem = document.createElement('li');
@@ -44,7 +45,7 @@ export default function TaskItem(task) {
   if (task.due) {
     const dateTag = document.createElement('span');
     dateTag.classList.add('task-tag', 'date');
-    dateTag.innerText = task.due;
+    dateTag.innerText = format(new Date(task.due), 'dd/MM/yyyy');
     taskWrapperInfo.appendChild(dateTag);
   }
   

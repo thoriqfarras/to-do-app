@@ -1,5 +1,6 @@
 import Project from './project.js';
 import Task from './task.js';
+import { format, addDays, formatDistanceStrict, parseISO } from 'date-fns';
 
 let taskIdCounter = 0;
 
@@ -23,6 +24,7 @@ export default function AppController() {
       targetProject = projects.at(-1);
     }
     targetProject.addTask(task);
+    logbook.addTask(task);
     taskIdCounter++;
     return 1;
   }
@@ -44,6 +46,7 @@ export default function AppController() {
     for (const project of projects) {
       if (project.getTasks().includes(task)) {
         project.removeTask(task);
+        logbook.removeTask(task);
         return;
       }
     }
@@ -51,12 +54,7 @@ export default function AppController() {
   }
 
   function getAllTasks() {
-    let allTasks = [];
-    projects.forEach(project => {
-      const tasks = project.getTasks();
-      allTasks.push(...tasks);
-    });
-    return allTasks;
+    return logbook.getTasks();
   }
 
   // project controls
@@ -92,6 +90,33 @@ export default function AppController() {
     return 1;
   }
 
+  function updateToday() {
+    for (const task of today.getTasks()) {
+      today.removeTask(task);
+    } 
+    const todayTasks = getAllTasks().filter(task => task.due === format(new Date(), 'yyyy-MM-dd'));
+    todayTasks.forEach(task => {
+      today.addTask(task);
+      console.log(task.title + ' was added to today');
+    });
+  }
+
+  function updateNextWeek() {
+    for (const task of nextWeek.getTasks()) {
+      nextWeek.removeTask(task);
+    } 
+    getAllTasks().forEach(task => {
+      if (task.due) {
+        const nextWeekEnd = addDays(new Date(), 7);
+        const distance = formatDistanceStrict(nextWeekEnd, new Date(task.due), {unit: 'day', addSuffix: true});
+        console.log(distance);
+        if (distance.includes('in')) {
+          nextWeek.addTask(task);
+        }
+      }
+    });
+  }
+
   function getTaskById(id) {
     const allTasks = getAllTasks();
     return allTasks.find(task => +task.getId() === +id);
@@ -120,5 +145,7 @@ export default function AppController() {
     getProjectByName,
     getAllTasks,
     getTaskById,
+    updateToday,
+    updateNextWeek,
   };
 }
