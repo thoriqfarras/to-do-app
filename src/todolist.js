@@ -6,7 +6,7 @@ let taskIdCounter = 0;
 
 export default function AppController() {
 
-  const inbox = new Project('Inbox');
+  const inbox = new Project('Inbox', 'blueviolet');
   const today = new Project('Today');
   const nextWeek = new Project('Next 7 days');
   const logbook = new Project('Logbook');
@@ -17,12 +17,13 @@ export default function AppController() {
   function addTask(taskInfo) {
     if (!taskInfo.title) return -1;
     const task = new Task({ id: taskIdCounter, ...taskInfo });
-    let targetProject = projects.find(p => p.name === task.project);
+    let targetProject = projects.find(p => p.title === task.project);
     if (!targetProject) {
       console.log(`project '${task.project}' doesn't exist. creating...`);
       addProject(task.project);
       targetProject = projects.at(-1);
     }
+    task.projectColor = targetProject.color;
     targetProject.addTask(task);
     logbook.addTask(task);
     taskIdCounter++;
@@ -31,11 +32,11 @@ export default function AppController() {
 
   function editTask(task, { ...args }) {
     if (!args.title) return -1;
-    const oldProjectName = task.project;
+    const oldProjectTitle = task.project;
     task.edit({ ...args });
-    if (oldProjectName !== task.project) {
-      const oldProject = getProjectByName(oldProjectName);
-      const newProject = getProjectByName(task.project);
+    if (oldProjectTitle !== task.project) {
+      const oldProject = getProjectByTitle(oldProjectTitle);
+      const newProject = getProjectByTitle(task.project);
       newProject.addTask(task);
       oldProject.removeTask(task);
     }
@@ -50,7 +51,7 @@ export default function AppController() {
         return;
       }
     }
-    console.log(`${task.name} is not found`);
+    console.log(`${task.title} is not found`);
   }
 
   function getAllTasks() {
@@ -58,35 +59,31 @@ export default function AppController() {
   }
 
   // project controls
-  function addProject(name, color="") {
-    if (getProjectNames().includes(name)) {
-      console.log(`project '${name}' already exists.`);
+  function addProject(title, color="") {
+    if (getProjectTitles().includes(title)) {
+      console.log(`project '${title}' already exists.`);
       return 0;
-    } else if (!name) {
-      console.log('project name cannot be blank');
+    } else if (!title) {
+      console.log('project title cannot be blank');
       return -1;
     }
-    const newProject = new Project(name);
-    if (color) newProject.color = color;
+    const newProject = new Project(title, color);
     projects.push(newProject);
-    console.log(`project '${name}' added`);
+    console.log(`project '${title}' added`);
     return 1;
   }
 
-  function editProject(project, newProjectName) {
-    if (getProjectNames().filter(name => name != project.name).includes(newProjectName)) {
-      console.log(`${newProjectName} already exist`);
+  function editProject(project, newProjectTitle, newProjectColor='') {
+    if (getProjectTitles().filter(title => title != project.getTitle()).includes(newProjectTitle)) {
+      console.log(`${newProjectTitle} already exist`);
       return 0;
-    } else if (!newProjectName) {
-      console.log('project name cannot be blank');
+    } else if (!newProjectTitle) {
+      console.log('project title cannot be blank');
       return -1;
     }
-    const oldName = project.name;
-    project.edit(newProjectName);
-    project.getTasks().forEach(task => {
-      task.edit({ project: newProjectName });
-    });
-    console.log(`'${oldName}' changed to '${newProjectName}': `, projects);
+    const oldTitle = project.title;
+    project.edit({ title: newProjectTitle, color: newProjectColor });
+    console.log(`'${oldTitle}' changed to '${newProjectTitle}': `, projects);
     return 1;
   }
 
@@ -126,12 +123,12 @@ export default function AppController() {
     return projects;
   }
 
-  function getProjectNames() {
-    return projects.map(project => project.name);
+  function getProjectTitles() {
+    return projects.map(project => project.title);
   }
 
-  function getProjectByName(name) {
-    return projects.find(project => project.name === name);
+  function getProjectByTitle(title) {
+    return projects.find(project => project.title === title);
   }
 
   return {
@@ -141,8 +138,8 @@ export default function AppController() {
     addProject,
     editProject,
     getProjects,
-    getProjectNames,
-    getProjectByName,
+    getProjectTitles,
+    getProjectByTitle,
     getAllTasks,
     getTaskById,
     updateToday,

@@ -6,6 +6,7 @@ export default class Task {
     status = 'todo', 
     due, 
     project = 'Inbox', 
+    projectColor = 'blueviolet',
     priority = 0, 
     note = ''
   }) {
@@ -14,6 +15,7 @@ export default class Task {
     this.status = status;
     this.due = due;
     this.project = project;
+    this.projectColor = projectColor;
     this.priority = priority;
     this.note = note;
   }

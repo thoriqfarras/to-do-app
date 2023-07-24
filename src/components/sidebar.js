@@ -77,31 +77,31 @@ export default function Sidebar(projects) {
     }
     for (const project of projects) {
       if (
-        project.name === 'Inbox' ||
-        project.name === 'Today' ||
-        project.name === 'Next 7 days' ||
-        project.name === 'Logbook'
+        project.title === 'Inbox' ||
+        project.title === 'Today' ||
+        project.title === 'Next 7 days' ||
+        project.title === 'Logbook'
       ) continue;
       const projectWrapper = document.createElement('li');
       const projectAnchor = document.createElement('a');
       const circle = document.createElement('div');
       const colorPicker = document.createElement('input');
-      const projectName = document.createElement('p');
+      const projectTitle = document.createElement('p');
       const editBtn = document.createElement('img');
-      projectAnchor.dataset.projectName = project.name;
+      projectAnchor.dataset.projectTitle = project.title;
       projectAnchor.classList.add('project-item');
       circle.style.backgroundColor = project.color;
       circle.classList.add('circle');
       colorPicker.setAttribute('type', 'color');
       colorPicker.classList.add('project-color');
       colorPicker.value = project.color;
-      projectName.innerText = project.name;
-      projectName.style.pointerEvents = 'none';
+      projectTitle.innerText = project.title;
+      projectTitle.style.pointerEvents = 'none';
       editBtn.setAttribute('id', 'edit-proj-btn');
       editBtn.setAttribute('src', EditSvg);
       projectAnchor.appendChild(circle);
       projectAnchor.appendChild(colorPicker);
-      projectAnchor.appendChild(projectName);
+      projectAnchor.appendChild(projectTitle);
       projectAnchor.appendChild(editBtn);
       projectWrapper.appendChild(projectAnchor);
       projectList.appendChild(projectWrapper);

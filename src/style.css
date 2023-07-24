@@ -278,6 +278,7 @@ footer img {
 .task-tag.project {
   background-color: blueviolet;
   color: var(--white);
+  /* mix-blend-mode: difference; */
   padding: 4px;
   border-radius: 5px;
   margin-left: auto;

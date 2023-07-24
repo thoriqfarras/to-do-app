@@ -49,11 +49,11 @@ export default function App() {
         sidebar.classList.toggle('closed');
       } else if (e.target.classList.contains('project-item')) {
         const targetProjectName = e.target.querySelector('p').innerText;
-        const targetProject = projects.find(project => project.name == targetProjectName);
+        const targetProject = projects.find(project => project.title == targetProjectName);
         if (activeProject != targetProject) {
-          if (targetProject.name === 'Today') {
+          if (targetProject.title === 'Today') {
             todolist.updateToday();
-          } else if (targetProject.name === 'Next 7 days') {
+          } else if (targetProject.title === 'Next 7 days') {
             todolist.updateNextWeek();
           }
           activeProject = targetProject;
@@ -61,7 +61,7 @@ export default function App() {
         }
       } else if (e.target.id === 'edit-proj-btn') {
         const projectNameBeingEdited = e.target.parentElement.innerText;
-        projectBeingEdited = todolist.getProjects().find(project => project.name == projectNameBeingEdited);
+        projectBeingEdited = todolist.getProjects().find(project => project.title == projectNameBeingEdited);
         popupProject.toggle('edit');
         popupProject.fillTitleField(projectNameBeingEdited);
         app.appendChild(popupProject.popup);
@@ -74,9 +74,12 @@ export default function App() {
     function changeProjectColor(e) {
       const circle = e.target.previousSibling;
       const projectName = e.target.nextSibling.innerText;
-      const project = projects.find(p => p.name === projectName);
+      const project = projects.find(p => p.title === projectName);
       circle.style.backgroundColor = e.target.value;
-      project.color = e.target.value;
+      project.edit({ color: e.target.value })
+      if (project === activeProject) {
+        main.loadProject(activeProject);
+      }
     }
   }
   

@@ -27,7 +27,7 @@ export default function Main(activeProject) {
     main.appendChild(tasksList);
     main.appendChild(footer);
 
-    pageTitle.innerText = activeProject.name;
+    pageTitle.innerText = activeProject.title;
     
     const tasks = activeProject.getTasks();
     tasks.forEach(task => {

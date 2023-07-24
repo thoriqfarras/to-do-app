@@ -27,10 +27,11 @@ export default function TaskItem(task) {
     taskNoteIndicator.setAttribute('alt', 'task note icon');
     taskWrapperMain.appendChild(taskNoteIndicator);
   }
-  
+
   const projectTag = document.createElement('span');
   projectTag.classList.add('task-tag', 'project');
   projectTag.innerText = task.project;
+  projectTag.style.backgroundColor = task.projectColor;
   taskWrapperInfo.appendChild(projectTag);
   
   if (task.priority) {
