@@ -77,7 +77,7 @@ export default function App() {
       const project = projects.find(p => p.title === projectName);
       circle.style.backgroundColor = e.target.value;
       project.edit({ color: e.target.value })
-      if (project === activeProject) {
+      if (project === activeProject || activeProject.title === 'Logbook') {
         main.loadProject(activeProject);
       }
     }
@@ -92,6 +92,7 @@ export default function App() {
         resetFormFields(popupTask.popup);
         popupTask.toggle('add');
         app.appendChild(popupTask.popup);
+        fillFormFieldsWithTaskInfo(popupTask.popup, { project: activeProject.title })
         popupTask.popup.querySelector('input').focus();
       } else if (e.target.classList.contains('project')) {
         resetFormFields(popupProject.popup);
@@ -179,7 +180,7 @@ export default function App() {
         const selectedTask = todolist.getTaskById(taskId);
         taskDisplayed = selectedTask;
         popupTask.toggle('overview');
-        fillFormFields(popupTask.popup, selectedTask);
+        fillFormFieldsWithTaskInfo(popupTask.popup, selectedTask);
         app.appendChild(popupTask.popup);
         console.log(selectedTask);
       } else if (e.target.type === 'checkbox') {
@@ -218,24 +219,30 @@ export default function App() {
     });
   }
   
-  function fillFormFields(popup, task) {
+  function fillFormFieldsWithTaskInfo(popup, { ...taskInfo }) {
     const statusIndicator = popup.querySelector('#task-status');
     const titleField = popup.querySelector('#task-title'); 
     const projectField = popup.querySelector('#task-project'); 
     const dueField = popup.querySelector('#task-due'); 
     const priorityField = popup.querySelector('#task-priority'); 
     const noteField = popup.querySelector('#task-note'); 
-    statusIndicator.value = task.status;
-    if (task.status === 'todo') {
-      statusIndicator.style.color = "red";
-    } else {
-      statusIndicator.style.color = "green";
+    if (statusIndicator) {
+      statusIndicator.value = taskInfo.status;
+      if (taskInfo.status === 'todo') {
+        statusIndicator.style.color = "red";
+      } else {
+        statusIndicator.style.color = "green";
+      }
     }
-    titleField.value = task.title;
-    projectField.value = task.project;
-    dueField.value = task.due;
-    priorityField.value = task.priority;
-    noteField.value = task.note;
+    titleField.value = taskInfo.title || '';
+    projectField.value = taskInfo.project || '';
+    dueField.value = taskInfo.due || '';
+    if (taskInfo.priority) {
+      priorityField.value = taskInfo.priority;
+    } else {
+      priorityField.selectedIndex = 0;
+    } 
+    noteField.value = taskInfo.note || '';
   }
 
   function extractTaskInfo(formValues) {

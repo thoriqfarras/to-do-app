@@ -32,7 +32,12 @@ export default function Main(activeProject) {
     const tasks = activeProject.getTasks();
     tasks.forEach(task => {
       if (task.status === 'todo') {
-        tasksList.appendChild(new TaskItem(task));
+        const taskItem = new TaskItem(task)
+        tasksList.appendChild(taskItem);
+        if (task.project === activeProject.title) {
+          const projectTag = taskItem.querySelector('.task-tag.project');
+          projectTag.remove();
+        }
       }
     });
   }

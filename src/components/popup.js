@@ -239,13 +239,13 @@ export function PopupTask(projects) {
     }
     for (const project of projects) {
       if (
-        project.name === 'Today' ||
-        project.name === 'Next 7 days' ||
-        project.name === 'Logbook'
+        project.title === 'Today' ||
+        project.title === 'Next 7 days' ||
+        project.title === 'Logbook'
       ) continue;
       const projectOption = document.createElement('option');
-      projectOption.setAttribute('value', project.name);
-      projectOption.innerText = project.name;
+      projectOption.setAttribute('value', project.title);
+      projectOption.innerText = project.title;
       taskProject.appendChild(projectOption);
     }
     const addNewProjectOption = document.createElement('option');
