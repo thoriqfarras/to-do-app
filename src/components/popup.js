@@ -35,11 +35,16 @@ export default function Popup() {
   function clearWarningMessage() {
     document.querySelector('#warning-msg')?.remove();
   }
+
+  function getState() {
+    return;
+  }
   
   return { 
     popup: overlay, 
     loadWarningMessage,
     clearWarningMessage,
+    getState,
   };
 }
 
@@ -324,5 +329,47 @@ export function PopupProject() {
     getState: () => { return state }, 
     toggle,
     fillTitleField,
+  };
+}
+
+export function PopupDelete() {
+  const popup = Popup();
+  const element = popup.popup;
+  const elementWrapper = element.querySelector('.popup');
+  const title = element.querySelector('h2');
+  elementWrapper.setAttribute('id', 'popup-delete');
+  title.innerText = "Confirm deletion";
+
+  const prompt = document.createElement('li');
+  elementWrapper.appendChild(prompt);
+
+  const btnsWrapper = document.createElement('li');
+  elementWrapper.appendChild(btnsWrapper);
+  const btnOne = document.createElement('button');
+  const btnTwo = document.createElement('button');
+  btnOne.setAttribute('id', 'cancel-btn');
+  btnOne.style.backgroundColor = 'red';
+  btnOne.style.padding = '1rem 0';
+  btnOne.innerText = 'Cancel';
+  btnTwo.setAttribute('id', 'commit-btn');
+  btnTwo.style.backgroundColor = 'blueviolet';
+  btnTwo.style.padding = '1rem 0';
+  btnTwo.innerText = 'Confirm';
+  btnsWrapper.appendChild(btnOne);
+  btnsWrapper.appendChild(btnTwo);
+  elementWrapper.appendChild(btnsWrapper);
+
+  function setMode(mode, object) {
+    if (mode === 'project') {
+      prompt.innerText = `Project '${object.title}' will be deleted. Confirm?`;
+    } else if (mode === 'task') {
+      prompt.innerText = `Task '${object.title}' will be deleted. Confirm?`;
+    }
+  }
+
+  return {
+    ...popup,
+    popup: element,
+    setMode,
   };
 }

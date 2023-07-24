@@ -2,7 +2,7 @@ import Todolist from './todolist';
 import Sidebar from './components/sidebar.js';
 import Main from './components/main-content.js';
 import ActionBtn from './components/actionBtn.js';
-import { PopupTask, PopupProject } from './components/popup.js';
+import Popup, { PopupTask, PopupProject, PopupDelete } from './components/popup.js';
 import './style.css';
 
 export default function App() {
@@ -18,6 +18,7 @@ export default function App() {
   let projectBeingEdited = {};
   let taskDisplayed = {};
   let taskBeingEdited = {};
+  let popupDisplayed = {};
   
   todolist.addTask({ title: 'mop the floor', priority: 2 });
   todolist.addProject("Groceries");
@@ -28,6 +29,7 @@ export default function App() {
   const actionBtn = ActionBtn();
   const popupTask = PopupTask(projects);
   const popupProject = PopupProject();
+  const popupDelete = PopupDelete();
   
   app.appendChild(sidebar.sidebar);
   app.appendChild(main.main);
@@ -38,9 +40,12 @@ export default function App() {
   clickHandlerActionBtn(actionBtn);
   clickHandlerPopup(popupTask, sidebar);
   clickHandlerPopup(popupProject, sidebar);
+  clickHandlerPopup(popupDelete, sidebar);
   
   console.log(projects);
   console.log(todolist.getAllTasks());
+
+  console.log(todolist);
   
   function clickHandlerSidebar(sidebar) {
     sidebar.addEventListener('click', (e) => {
@@ -65,6 +70,7 @@ export default function App() {
         popupProject.toggle('edit');
         popupProject.fillTitleField(projectNameBeingEdited);
         app.appendChild(popupProject.popup);
+        popupDisplayed = popupProject.popup;
         popupProject.popup.querySelector('input').focus();
       } else if (e.target.classList.contains('project-color')) {
         e.target.addEventListener('change', changeProjectColor);
@@ -92,12 +98,14 @@ export default function App() {
         resetFormFields(popupTask.popup);
         popupTask.toggle('add');
         app.appendChild(popupTask.popup);
+        popupDisplayed = popupTask.popup;
         fillFormFieldsWithTaskInfo(popupTask.popup, { project: activeProject.title })
         popupTask.popup.querySelector('input').focus();
       } else if (e.target.classList.contains('project')) {
         resetFormFields(popupProject.popup);
         popupProject.toggle('add');
         app.appendChild(popupProject.popup);
+        popupDisplayed = popupProject.popup;
         popupProject.popup.querySelector('input').focus();
       }
     });
@@ -106,11 +114,12 @@ export default function App() {
   function clickHandlerPopup(popupInstance, sidebar) {
     const popup = popupInstance.popup;
     const popupType = popup.firstChild.id;
+    let state = popupInstance.getState();
     popup.addEventListener('click', (e) => {
       popupInstance.clearWarningMessage();
-      let state = popupInstance.getState();
       if (e.target.id === 'cancel-btn' || e.target.classList.contains('overlay')) {
-        popup.remove();
+        popupDisplayed.remove();
+        popupDisplayed = {};
       } else if (e.target.id === 'commit-btn') {
         if (popupType === 'popup-project') {
           const projectNameField = popup.querySelector('input');
@@ -158,6 +167,10 @@ export default function App() {
               popupInstance.loadWarningMessage(success, taskTitleField);
             }
           }
+        } else if (popupType === 'popup-delete') {
+          todolist.removeTask(taskDisplayed);
+          app.removeChild(popupDisplayed);
+          main.loadProject(activeProject);
         }
       } else if (e.target.id === 'edit-task-btn') {
         popupInstance.toggle('edit');
@@ -168,6 +181,11 @@ export default function App() {
         resetFormFields(popupProject.popup);
         popupProject.toggle('add');
         app.appendChild(popupProject.popup);
+      } else if (e.target.id === 'delete-task-btn') {
+        popupDelete.setMode('task', taskDisplayed);
+        popupDisplayed.remove();
+        app.appendChild(popupDelete.popup);
+        popupDisplayed = popupDelete.popup;
       }
     });
   }
@@ -182,6 +200,7 @@ export default function App() {
         popupTask.toggle('overview');
         fillFormFieldsWithTaskInfo(popupTask.popup, selectedTask);
         app.appendChild(popupTask.popup);
+        popupDisplayed = popupTask.popup;
         console.log(selectedTask);
       } else if (e.target.type === 'checkbox') {
         const taskId = +e.target.parentElement.dataset.id;

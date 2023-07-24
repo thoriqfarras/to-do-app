@@ -44,14 +44,9 @@ export default function AppController() {
   }
 
   function removeTask(task) {
-    for (const project of projects) {
-      if (project.getTasks().includes(task)) {
-        project.removeTask(task);
-        logbook.removeTask(task);
-        return;
-      }
-    }
-    console.log(`${task.title} is not found`);
+    const project = getProjectByTitle(task.project);
+    project.removeTask(task);
+    logbook.removeTask(task);
   }
 
   function getAllTasks() {
