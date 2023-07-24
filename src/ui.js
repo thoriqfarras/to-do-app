@@ -91,6 +91,7 @@ export default function App() {
         app.appendChild(popupTask.popup);
         popupTask.popup.querySelector('input').focus();
       } else if (e.target.classList.contains('project')) {
+        resetFormFields(popupProject.popup);
         popupProject.toggle('add');
         app.appendChild(popupProject.popup);
         popupProject.popup.querySelector('input').focus();
@@ -113,6 +114,7 @@ export default function App() {
             const success = todolist.addProject(projectNameField.value);
             if (success === 1) {
               sidebar.loadProjectList(projects);
+              popupTask.updateProjectOptions();
               popup.remove();
             } else {
               popupInstance.loadWarningMessage(success, projectNameField, projectNameField.value);
@@ -123,6 +125,7 @@ export default function App() {
               sidebar.loadProjectList(projects);
               popup.remove();
               if (activeProject === projectBeingEdited) main.loadProject(activeProject);
+              popupTask.updateProjectOptions();
             } else {
               popupInstance.loadWarningMessage(success, projectNameField, projectNameField.value);
             }
@@ -156,6 +159,11 @@ export default function App() {
         popupInstance.toggle('edit');
         state = popupInstance.getState();
         console.log(state);
+      } else if (e.target.value === 'add-new') {
+        popup.remove();
+        resetFormFields(popupProject.popup);
+        popupProject.toggle('add');
+        app.appendChild(popupProject.popup);
       }
     });
   }

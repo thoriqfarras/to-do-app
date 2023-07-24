@@ -86,21 +86,7 @@ export function PopupTask(projects) {
   listItems[1].appendChild(taskProjectLabel);
   listItems[1].appendChild(taskProject);
   
-  for (const project of projects) {
-    if (
-      project.name === 'Today' ||
-      project.name === 'Next 7 days' ||
-      project.name === 'Logbook'
-    ) continue;
-    const projectOption = document.createElement('option');
-    projectOption.setAttribute('value', project.name);
-    projectOption.innerText = project.name;
-    taskProject.appendChild(projectOption);
-  }
-  const addNewProjectOption = document.createElement('option');
-  addNewProjectOption.setAttribute('value', 'add-new');
-  addNewProjectOption.innerText = '+ Add new project...';
-  taskProject.appendChild(addNewProjectOption);
+  updateProjectOptions();
   
   const taskDueLabel = document.createElement('label');
   const taskDue = document.createElement('input');
@@ -247,13 +233,33 @@ export function PopupTask(projects) {
     });
   }
 
+  function updateProjectOptions() {
+    while (taskProject.firstChild) {
+      taskProject.removeChild(taskProject.firstChild);
+    }
+    for (const project of projects) {
+      if (
+        project.name === 'Today' ||
+        project.name === 'Next 7 days' ||
+        project.name === 'Logbook'
+      ) continue;
+      const projectOption = document.createElement('option');
+      projectOption.setAttribute('value', project.name);
+      projectOption.innerText = project.name;
+      taskProject.appendChild(projectOption);
+    }
+    const addNewProjectOption = document.createElement('option');
+    addNewProjectOption.setAttribute('value', 'add-new');
+    addNewProjectOption.innerText = '+ Add new project...';
+    taskProject.appendChild(addNewProjectOption);
+  }
+
   return { 
     ...Popup(), 
     popup: overlay, 
     getState: () => { return state }, 
     toggle,
-    enableFormFields,
-    disableFormFields, 
+    updateProjectOptions,
   };
 }
 
