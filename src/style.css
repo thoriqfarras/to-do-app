@@ -65,7 +65,8 @@ button {
   cursor: pointer;
   border: 0;
   background-color: transparent;
-  color: var(--darker-gray)
+  color: var(--darker-gray);
+  z-index: 3;
 }
 
 .sidebar.closed #toggle-sidebar {
@@ -102,6 +103,7 @@ button {
   cursor: pointer;
   background-color: var(--gray);
   width: 100%;
+  overflow: visible;
 }
 
 li {
@@ -121,11 +123,13 @@ li {
   filter: brightness(0.9);
 }
 
-.sidebar-main a:hover > #edit-proj-btn {
+.sidebar-main a:hover > #edit-proj-btn,
+.sidebar-main a:hover > #delete-proj-btn {
   filter: invert(72%) sepia(18%) saturate(189%) hue-rotate(179deg) brightness(89%) contrast(82%);
 }
 
-.sidebar-main a:hover > #edit-proj-btn:hover {
+.sidebar-main a:hover > #edit-proj-btn:hover,
+.sidebar-main a:hover > #delete-proj-btn:hover {
   filter: brightness(0.7);
 }
 

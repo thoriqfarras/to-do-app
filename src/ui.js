@@ -72,6 +72,12 @@ export default function App() {
       app.appendChild(popupProject.popup);
       popupDisplayed = popupProject.popup;
       popupProject.popup.querySelector('input').focus();
+    } else if (e.target.id === 'delete-proj-btn') {
+      const projectNameBeingEdited = e.target.parentElement.innerText;
+      projectBeingEdited = todolist.getProjects().find(project => project.title == projectNameBeingEdited);
+      popupDelete.setMode('project', projectBeingEdited);
+      app.appendChild(popupDelete.popup);
+      popupDisplayed = popupDelete.popup;
     } else if (e.target.classList.contains('project-color')) {
       e.target.addEventListener('change', changeProjectColor);
     }
@@ -191,9 +197,21 @@ export default function App() {
   function clickHanlderDeletePopup(e) {
     listenForPopupClose(e);
     if (e.target.id === 'commit-btn') {
-      todolist.removeTask(taskDisplayed);
-      app.removeChild(popupDisplayed);
-      main.loadProject(activeProject);
+      const mode = this.firstChild.className.replace('popup ', '');
+      if (mode === 'task') {
+        todolist.removeTask(taskDisplayed);
+        app.removeChild(popupDisplayed);
+        main.loadProject(activeProject);
+        taskDisplayed = {};
+      } else if (mode === 'project') {
+        todolist.removeProject(projectBeingEdited);
+        app.removeChild(popupDisplayed);
+        if (projectBeingEdited === activeProject) {
+          main.loadProject(projects[0]);
+        }
+        sidebar.loadProjectList(projects);
+        projectBeingEdited = {};
+      }
     }
   }
   

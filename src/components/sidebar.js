@@ -3,6 +3,7 @@ import TodaySvg from './calendar-today-outline.svg';
 import WeekSvg from './view-week-outline.svg';
 import LogbookSvg from './book-open-outline.svg';
 import EditSvg from './edit-task-icon.svg';
+import DeleteSvg from './delete-task-icon.svg';
 import '../style.css';
 
 export default function Sidebar(projects) {
@@ -88,6 +89,7 @@ export default function Sidebar(projects) {
       const colorPicker = document.createElement('input');
       const projectTitle = document.createElement('p');
       const editBtn = document.createElement('img');
+      const deleteBtn = document.createElement('img');
       projectAnchor.dataset.projectTitle = project.title;
       projectAnchor.classList.add('project-item');
       circle.style.backgroundColor = project.color;
@@ -99,10 +101,13 @@ export default function Sidebar(projects) {
       projectTitle.style.pointerEvents = 'none';
       editBtn.setAttribute('id', 'edit-proj-btn');
       editBtn.setAttribute('src', EditSvg);
+      deleteBtn.setAttribute('id', 'delete-proj-btn');
+      deleteBtn.setAttribute('src', DeleteSvg);
       projectAnchor.appendChild(circle);
       projectAnchor.appendChild(colorPicker);
       projectAnchor.appendChild(projectTitle);
       projectAnchor.appendChild(editBtn);
+      projectAnchor.appendChild(deleteBtn);
       projectWrapper.appendChild(projectAnchor);
       projectList.appendChild(projectWrapper);
     }

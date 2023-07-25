@@ -350,8 +350,12 @@ export function PopupDelete() {
 
   function setMode(mode, object) {
     if (mode === 'project') {
+      elementWrapper.classList.add('project');
+      elementWrapper.classList.remove('task');
       prompt.innerText = `Project '${object.title}' will be deleted. Confirm?`;
     } else if (mode === 'task') {
+      elementWrapper.classList.add('task');
+      elementWrapper.classList.remove('project');
       prompt.innerText = `Task '${object.title}' will be deleted. Confirm?`;
     }
   }

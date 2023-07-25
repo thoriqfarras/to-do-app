@@ -76,6 +76,13 @@ export default function AppController() {
     return 1;
   }
 
+  function removeProject(project) {
+    project.getTasks().forEach(task => {
+      removeTask(task);
+    });
+    projects.splice(projects.indexOf(project), 1);
+  }
+
   function updateToday() {
     for (const task of today.getTasks()) {
       today.removeTask(task);
@@ -138,6 +145,7 @@ export default function AppController() {
     removeTask,
     addProject,
     editProject,
+    removeProject,
     getProjects,
     getProjectTitles,
     getProjectByTitle,
