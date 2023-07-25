@@ -14,9 +14,7 @@ export default function Main(activeProject) {
   function loadProject(activeProject) {
 
     while (main.firstChild) {
-      // console.log(main.firstChild);
       main.removeChild(main.firstChild);
-      // break;
     }
 
     while (tasksList.firstChild) {

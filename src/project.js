@@ -15,12 +15,10 @@ export default class Project {
 
   addTask(task) {
     this._tasks.push(task);
-    console.log(`${task.title} added to ${this.title}`);
   }
 
   removeTask(task) {
     this._tasks = this._tasks.filter(t => t !== task);
-    console.log(`${task.name} deleted from ${this.title}`);
   }
 
   getTasks() { return this._tasks }; 

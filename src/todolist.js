@@ -54,10 +54,6 @@ export default function AppController() {
     storage.saveItem('project', projects);
   }
 
-  function getAllTasks() {
-    return logbook.getTasks();
-  }
-
   // project controls
   function addProject(title, color="") {
     if (getProjectTitles().includes(title)) {
@@ -112,6 +108,11 @@ export default function AppController() {
         }
       }
     });
+  }
+
+  // getters
+  function getAllTasks() {
+    return logbook.getTasks();
   }
 
   function getTaskById(id) {

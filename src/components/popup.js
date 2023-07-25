@@ -36,15 +36,10 @@ export default function Popup() {
     document.querySelector('#warning-msg')?.remove();
   }
 
-  // function getState() {
-  //   return;
-  // }
-  
   return { 
     popup: overlay, 
     loadWarningMessage,
     clearWarningMessage,
-    // getState,
   };
 }
 
@@ -143,7 +138,6 @@ export function PopupTask(projects) {
   const btnsWrapper = listItems[listItems.length - 1];
   const btnOne = document.createElement('button');
   const btnTwo = document.createElement('button');
-  const btnThree = document.createElement('button');
   const deleteIcon = document.createElement('img');
   deleteIcon.setAttribute('src', DeleteSvg);
   deleteIcon.setAttribute('alt', 'delete task icon');
