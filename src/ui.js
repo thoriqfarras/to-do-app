@@ -4,6 +4,7 @@ import Sidebar from './components/sidebar.js';
 import Main from './components/main-content.js';
 import ActionBtn from './components/actionBtn.js';
 import { PopupTask, PopupProject, PopupDelete } from './components/popup.js';
+import { format } from 'date-fns';
 import './style.css';
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
   let projectBeingEdited = {};
   let taskDisplayed = {};
   let popupDisplayed = {};
+  let markedTasks = [];
   
   todolist.addTask({ title: 'mop the floor', priority: 2 });
   todolist.addProject("Groceries");
@@ -47,6 +49,10 @@ export default function App() {
       this.classList.toggle('opened');
       this.classList.toggle('closed');
     } else if (e.target.classList.contains('project-item')) {
+      if (markedTasks) {
+        todolist.removeAllDoneTasks();
+        markedTasks = [];
+      }
       const targetProjectName = e.target.querySelector('p').innerText;
       const targetProject = projects.find(project => project.title == targetProjectName);
       if (activeProject != targetProject) {
@@ -79,7 +85,16 @@ export default function App() {
       popupTask.toggle('add');
       app.appendChild(popupTask.popup);
       popupDisplayed = popupTask.popup;
-      fillFormFieldsWithTaskInfo(popupTask.popup, { project: activeProject.title })
+      if (
+        activeProject.title === 'Logbook' || 
+        activeProject.title === "Next 7 days"
+      ) {
+        fillFormFieldsWithTaskInfo(popupTask.popup, { project: 'Inbox' });
+      } else if (activeProject.title === "Today") {
+        fillFormFieldsWithTaskInfo(popupTask.popup, { due: format(new Date(), 'yyyy-MM-dd'), project: 'Inbox' });
+      } else {
+        fillFormFieldsWithTaskInfo(popupTask.popup, { project: activeProject.title });
+      }
       popupTask.popup.querySelector('input').focus();
     } else if (e.target.classList.contains('project')) {
       resetFormFields(popupProject.popup);
@@ -196,8 +211,10 @@ export default function App() {
       const selectedTask = todolist.getTaskById(taskId);
       if (selectedTask.status === 'todo') {
         selectedTask.status = 'done';
+        markedTasks.push();
       } else {
         selectedTask.status = 'todo';
+        markedTasks.splice(markedTasks.indexOf(selectedTask), 1);
       }
     }
   }

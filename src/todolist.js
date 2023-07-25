@@ -21,7 +21,6 @@ export default function AppController() {
     const task = new Task({ id: taskIdCounter, ...taskInfo });
     let targetProject = projects.find(p => p.title === task.project);
     if (!targetProject) {
-      console.log(`project '${task.project}' doesn't exist. creating...`);
       addProject(task.project);
       targetProject = projects.at(-1);
     }
@@ -57,29 +56,23 @@ export default function AppController() {
   // project controls
   function addProject(title, color="") {
     if (getProjectTitles().includes(title)) {
-      console.log(`project '${title}' already exists.`);
       return 0;
     } else if (!title) {
-      console.log('project title cannot be blank');
       return -1;
     }
     const newProject = new Project(title, color);
     projects.push(newProject);
-    console.log(`project '${title}' added`);
     return 1;
   }
 
   function editProject(project, newProjectTitle, newProjectColor='') {
     if (getProjectTitles().filter(title => title != project.title).includes(newProjectTitle)) {
-      console.log(`${newProjectTitle} already exist`);
       return 0;
     } else if (!newProjectTitle) {
-      console.log('project title cannot be blank');
       return -1;
     }
     const oldTitle = project.title;
     project.edit({ title: newProjectTitle, color: newProjectColor });
-    console.log(`'${oldTitle}' changed to '${newProjectTitle}': `, projects);
     return 1;
   }
 
@@ -90,7 +83,6 @@ export default function AppController() {
     const todayTasks = getAllTasks().filter(task => task.due === format(new Date(), 'yyyy-MM-dd'));
     todayTasks.forEach(task => {
       today.addTask(task);
-      console.log(task.title + ' was added to today');
     });
   }
 
@@ -102,10 +94,17 @@ export default function AppController() {
       if (task.due) {
         const nextWeekEnd = addDays(new Date(), 7);
         const distance = formatDistanceStrict(nextWeekEnd, new Date(task.due), {unit: 'day', addSuffix: true});
-        console.log(distance);
         if (distance.includes('in')) {
           nextWeek.addTask(task);
         }
+      }
+    });
+  }
+
+  function removeAllDoneTasks() {
+    getAllTasks().forEach(task => {
+      if (task.status === 'done') {
+        removeTask(task);
       }
     });
   }
@@ -146,5 +145,6 @@ export default function AppController() {
     getTaskById,
     updateToday,
     updateNextWeek,
+    removeAllDoneTasks,
   };
 }
