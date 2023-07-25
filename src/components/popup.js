@@ -36,21 +36,19 @@ export default function Popup() {
     document.querySelector('#warning-msg')?.remove();
   }
 
-  function getState() {
-    return;
-  }
+  // function getState() {
+  //   return;
+  // }
   
   return { 
     popup: overlay, 
     loadWarningMessage,
     clearWarningMessage,
-    getState,
+    // getState,
   };
 }
 
-export function PopupTask(projects) {
-  let state = '';
-  
+export function PopupTask(projects) {  
   const overlay = Popup().popup;
   const popup = overlay.querySelector('.popup');
   const title = popup.querySelector('h2');
@@ -157,7 +155,7 @@ export function PopupTask(projects) {
   editIcon.setAttribute('alt', 'edit task icon');
   
   function toggle(mode) {
-    popup.className = 'popup task';
+    popup.className = 'popup';
     popup.classList.add(mode);
     
     while (btnsWrapper.firstChild) {
@@ -215,7 +213,6 @@ export function PopupTask(projects) {
       btnsWrapper.appendChild(btnOne);
       btnsWrapper.appendChild(btnTwo);
     }
-    state = mode;
   }
 
   function enableFormFields() {
@@ -262,15 +259,12 @@ export function PopupTask(projects) {
   return { 
     ...Popup(), 
     popup: overlay, 
-    getState: () => { return state }, 
     toggle,
     updateProjectOptions,
   };
 }
 
-export function PopupProject() {
-  let state = '';
-  
+export function PopupProject() {  
   const overlay = Popup().popup;
   const popup = overlay.querySelector('.popup');
   const title = popup.querySelector('h2');
@@ -309,14 +303,16 @@ export function PopupProject() {
   
   function toggle(mode) {
     if (mode === 'add') {
+      popup.classList.add('add');
+      popup.classList.remove('edit');
       title.innerText = 'Add a New Project';
       btnTwo.innerText = 'Add project';      
     } else if (mode === 'edit') {
+      popup.classList.add('edit');
+      popup.classList.remove('add');
       title.innerText = 'Edit Project';
       btnTwo.innerText = 'Save';      
     }
-    state = mode;
-    console.log(state, mode);
   }
   
   function fillTitleField(titleText) {
@@ -326,7 +322,6 @@ export function PopupProject() {
   return { 
     ...Popup(), 
     popup: overlay, 
-    getState: () => { return state }, 
     toggle,
     fillTitleField,
   };

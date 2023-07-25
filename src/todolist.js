@@ -69,7 +69,7 @@ export default function AppController() {
   }
 
   function editProject(project, newProjectTitle, newProjectColor='') {
-    if (getProjectTitles().filter(title => title != project.getTitle()).includes(newProjectTitle)) {
+    if (getProjectTitles().filter(title => title != project.title).includes(newProjectTitle)) {
       console.log(`${newProjectTitle} already exist`);
       return 0;
     } else if (!newProjectTitle) {
@@ -127,6 +127,7 @@ export default function AppController() {
   }
 
   return {
+    projects,
     addTask,
     editTask,
     removeTask,
