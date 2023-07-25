@@ -1,5 +1,6 @@
 import Project from './project.js';
 import Task from './task.js';
+import Storage from './storage.js';
 import { format, addDays, formatDistanceStrict, parseISO } from 'date-fns';
 
 let taskIdCounter = 0;
@@ -11,7 +12,8 @@ export default function AppController() {
   const nextWeek = new Project('Next 7 days');
   const logbook = new Project('Logbook');
 
-  let projects = [inbox, today, nextWeek, logbook];
+  const storage = Storage();
+  let projects = storage.getItem('projects') || [inbox, today, nextWeek, logbook];
 
   // task controls
   function addTask(taskInfo) {
@@ -27,6 +29,7 @@ export default function AppController() {
     targetProject.addTask(task);
     logbook.addTask(task);
     taskIdCounter++;
+    storage.saveItem('project', projects);
     return 1;
   }
 
@@ -40,6 +43,7 @@ export default function AppController() {
       newProject.addTask(task);
       oldProject.removeTask(task);
     }
+    storage.saveItem('project', projects);
     return 1;
   }
 
@@ -47,6 +51,7 @@ export default function AppController() {
     const project = getProjectByTitle(task.project);
     project.removeTask(task);
     logbook.removeTask(task);
+    storage.saveItem('project', projects);
   }
 
   function getAllTasks() {

@@ -1,23 +1,22 @@
-import Todolist from './todolist';
+import Todolist from './todolist.js';
+import Storage from './storage.js';
 import Sidebar from './components/sidebar.js';
 import Main from './components/main-content.js';
 import ActionBtn from './components/actionBtn.js';
-import Popup, { PopupTask, PopupProject, PopupDelete } from './components/popup.js';
+import { PopupTask, PopupProject, PopupDelete } from './components/popup.js';
 import './style.css';
 
 export default function App() {
   
-  const todolist = Todolist();
-  
+  const todolist = Todolist();  
   const app = document.createElement('div');
   app.classList.add('app');
   document.body.appendChild(app);
-  
-  let projects = todolist.getProjects();
+
+  let projects = todolist.projects;
   let activeProject = projects[0];
   let projectBeingEdited = {};
   let taskDisplayed = {};
-  let taskBeingEdited = {};
   let popupDisplayed = {};
   
   todolist.addTask({ title: 'mop the floor', priority: 2 });

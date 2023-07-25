@@ -105,7 +105,6 @@ export default function Sidebar(projects) {
       projectAnchor.appendChild(editBtn);
       projectWrapper.appendChild(projectAnchor);
       projectList.appendChild(projectWrapper);
-      console.log(colorPicker.value);
     }
   }
   
