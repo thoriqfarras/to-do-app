@@ -121,7 +121,7 @@ export default function App() {
   function clickHandlerPopupProject(e) {
     listenForPopupClose(e);
     popupProject.clearWarningMessage();
-    let state = this.firstChild.className.replace('popup ', '');
+    let state = this.querySelector('.popup').className.replace('popup ', '');
     if (e.target.id === 'commit-btn') {
       const projectNameField = this.querySelector('input');
       if (state === 'add') {
@@ -153,9 +153,9 @@ export default function App() {
     listenForPopupClose(e);
     popupTask.clearWarningMessage();
     const formElements = getAllFormElements(this);
-    const formValues = getAllFormValues(formElements);
-    let state = this.firstChild.className.replace('popup ', '');
+    let state = this.querySelector('.popup').className.replace('popup ', '');
     if (e.target.id === 'commit-btn') {
+      const formValues = getAllFormValues(formElements);
       if (state === 'add') {
         const success = todolist.addTask(extractTaskInfo(formValues));
         if (success === 1) {
@@ -186,6 +186,7 @@ export default function App() {
       resetFormFields(popupProject.popup);
       popupProject.toggle('add');
       app.appendChild(popupProject.popup);
+      popupDisplayed = popupProject.popup;
     } else if (e.target.id === 'delete-task-btn') {
       popupDelete.setMode('task', taskDisplayed);
       popupDisplayed.remove();

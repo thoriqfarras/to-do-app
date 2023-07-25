@@ -73,6 +73,7 @@ export default function AppController() {
     }
     const oldTitle = project.title;
     project.edit({ title: newProjectTitle, color: newProjectColor });
+    storage.saveItem('project', projects);
     return 1;
   }
 
