@@ -82,6 +82,7 @@ export default function AppController() {
       removeTask(task);
     });
     projects.splice(projects.indexOf(project), 1);
+    storage.saveItem('project', projects);
   }
 
   function updateToday() {
