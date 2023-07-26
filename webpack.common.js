@@ -4,7 +4,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    app: './src/index.js',
+    index: './src/index.js',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -34,7 +34,7 @@ module.exports = {
       {
         test: /\.(woff|woff2|eot|ttf|otf)%/i,
         type: 'asset/resource',
-      }
+      },
     ],
   },
 };

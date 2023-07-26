@@ -16,5 +16,5 @@ export default function Storage() {
     saveItem,
     getItem,
     deleteItem,
-  }
+  };
 }

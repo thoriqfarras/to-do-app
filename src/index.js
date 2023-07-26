@@ -1,3 +1,3 @@
-import App from './ui.js';
+import App from './ui';
 
-const app = App();
+App();

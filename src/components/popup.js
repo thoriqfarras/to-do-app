@@ -6,57 +6,57 @@ import EditSvg from './edit-task-icon.svg';
 export default function Popup() {
   const overlay = document.createElement('div');
   overlay.classList.add('overlay');
-  
+
   const popup = document.createElement('ul');
   popup.classList.add('popup');
   overlay.appendChild(popup);
-  
+
   const title = document.createElement('h2');
   popup.appendChild(title);
-  
-  function loadWarningMessage(code, referenceNode, name='') {
+
+  function loadWarningMessage(code, referenceNode, name = '') {
     const msg = document.createElement('p');
     msg.setAttribute('id', 'warning-msg');
     switch (code) {
       case -1:
-      msg.innerText = 'Title cannot be blank';
-      break;
+        msg.innerText = 'Title cannot be blank';
+        break;
       case 0:
-      msg.innerText = `'${name}' already exists`;
-      break;
+        msg.innerText = `'${name}' already exists`;
+        break;
       default:
-      break;
+        break;
     }
     msg.style.color = 'red';
     msg.style.fontSize = '1rem';
     referenceNode.parentElement.insertBefore(msg, referenceNode.nextSibling);
   }
-  
+
   function clearWarningMessage() {
     document.querySelector('#warning-msg')?.remove();
   }
 
-  return { 
-    popup: overlay, 
+  return {
+    popup: overlay,
     loadWarningMessage,
     clearWarningMessage,
   };
 }
 
-export function PopupTask(projects) {  
+export function PopupTask(projects) {
   const overlay = Popup().popup;
   const popup = overlay.querySelector('.popup');
   const title = popup.querySelector('h2');
   popup.classList.add('task');
   popup.setAttribute('id', 'popup-task');
-  
-  for (let i = 0; i < 6; i++) {
+
+  for (let i = 0; i < 6; i += 1) {
     const wrapper = document.createElement('li');
     popup.appendChild(wrapper);
   }
-  
+
   const listItems = popup.querySelectorAll('li');
-  
+
   const statusWrapper = document.createElement('li');
   const statusLabel = document.createElement('p');
   const status = document.createElement('input');
@@ -65,7 +65,7 @@ export function PopupTask(projects) {
   statusLabel.appendChild(status);
   status.setAttribute('id', 'task-status');
   statusWrapper.appendChild(statusLabel);
-  
+
   const taskTitleLabel = document.createElement('label');
   const taskTitle = document.createElement('input');
   taskTitleLabel.innerText = 'Title';
@@ -74,7 +74,7 @@ export function PopupTask(projects) {
   taskTitle.setAttribute('id', 'task-title');
   listItems[0].appendChild(taskTitleLabel);
   listItems[0].appendChild(taskTitle);
-  
+
   const taskProjectLabel = document.createElement('label');
   const taskProject = document.createElement('select');
   taskProjectLabel.innerText = 'Project';
@@ -83,9 +83,7 @@ export function PopupTask(projects) {
   taskProject.setAttribute('id', 'task-project');
   listItems[1].appendChild(taskProjectLabel);
   listItems[1].appendChild(taskProject);
-  
-  updateProjectOptions();
-  
+
   const taskDueLabel = document.createElement('label');
   const taskDue = document.createElement('input');
   taskDueLabel.innerText = 'Due date';
@@ -94,7 +92,7 @@ export function PopupTask(projects) {
   taskDue.setAttribute('id', 'task-due');
   listItems[2].appendChild(taskDueLabel);
   listItems[2].appendChild(taskDue);
-  
+
   const taskPriorityLabel = document.createElement('label');
   const taskPriority = document.createElement('select');
   taskPriorityLabel.innerText = 'Priority';
@@ -103,38 +101,38 @@ export function PopupTask(projects) {
   taskPriority.setAttribute('id', 'task-priority');
   listItems[3].appendChild(taskPriorityLabel);
   listItems[3].appendChild(taskPriority);
-  
-  for (let i = 0; i <= 3; i++) {
+
+  for (let i = 0; i <= 3; i += 1) {
     const priorityOption = document.createElement('option');
     priorityOption.setAttribute('value', i);
     switch (i) {
       case 0:
         priorityOption.innerText = 'None';
         break;
-        case 1:
-          priorityOption.innerText = 'Low';
-          break;
-          case 2:
-            priorityOption.innerText = 'Medium';
-            break;
-            case 3:
-              priorityOption.innerText = 'High';
-              break;
-              default:
-                break;
-              }
-              taskPriority.appendChild(priorityOption);
-            }
-            
-            const taskNoteLabel = document.createElement('label');
-            const taskNote = document.createElement('textarea');
-            taskNoteLabel.innerText = 'Note';
+      case 1:
+        priorityOption.innerText = 'Low';
+        break;
+      case 2:
+        priorityOption.innerText = 'Medium';
+        break;
+      case 3:
+        priorityOption.innerText = 'High';
+        break;
+      default:
+        break;
+    }
+    taskPriority.appendChild(priorityOption);
+  }
+
+  const taskNoteLabel = document.createElement('label');
+  const taskNote = document.createElement('textarea');
+  taskNoteLabel.innerText = 'Note';
   taskNoteLabel.setAttribute('for', 'task-note');
   taskNote.setAttribute('rows', 20);
   taskNote.setAttribute('id', 'task-note');
   listItems[4].appendChild(taskNoteLabel);
   listItems[4].appendChild(taskNote);
-  
+
   const btnsWrapper = listItems[listItems.length - 1];
   const btnOne = document.createElement('button');
   const btnTwo = document.createElement('button');
@@ -147,21 +145,63 @@ export function PopupTask(projects) {
   const editIcon = document.createElement('img');
   editIcon.setAttribute('src', EditSvg);
   editIcon.setAttribute('alt', 'edit task icon');
-  
+
+  function enableFormFields() {
+    listItems.forEach((child, index) => {
+      if (index === listItems.length - 1) {
+        return;
+      }
+      const field = child.children[1];
+      field.disabled = false;
+    });
+  }
+
+  function disableFormFields() {
+    listItems.forEach((child, index) => {
+      if (index === listItems.length - 1) {
+        return;
+      }
+      const field = child.children[1];
+      field.disabled = true;
+    });
+  }
+
+  function updateProjectOptions() {
+    while (taskProject.firstChild) {
+      taskProject.removeChild(taskProject.firstChild);
+    }
+    projects.forEach((project) => {
+      if (
+        project.title !== 'Today' ||
+        project.title !== 'Next 7 days' ||
+        project.title !== 'Logbook'
+      ) {
+        const projectOption = document.createElement('option');
+        projectOption.setAttribute('value', project.title);
+        projectOption.innerText = project.title;
+        taskProject.appendChild(projectOption);
+      }
+    });
+    const addNewProjectOption = document.createElement('option');
+    addNewProjectOption.setAttribute('value', 'add-new');
+    addNewProjectOption.innerText = '+ Add new project...';
+    taskProject.appendChild(addNewProjectOption);
+  }
+
   function toggle(mode) {
     popup.className = 'popup';
     popup.classList.add(mode);
-    
+
     while (btnsWrapper.firstChild) {
       btnsWrapper.firstChild.innerText = '';
       btnsWrapper.removeChild(btnsWrapper.firstChild);
     }
-    
+
     enableFormFields();
-    
+
     title.innerText = '';
     statusWrapper.remove();
-    
+
     popup.classList.add(mode);
     if (popup.classList.contains('overview')) {
       disableFormFields();
@@ -209,69 +249,28 @@ export function PopupTask(projects) {
     }
   }
 
-  function enableFormFields() {
-    listItems.forEach((child, index) => {
-      if (index === listItems.length - 1) {
-        return;
-      }
-      const field = child.children[1];
-      field.disabled = false;
-    });
-  }
-
-  function disableFormFields() {
-    listItems.forEach((child, index) => {
-      if (index === listItems.length - 1) {
-        return;
-      }
-      const field = child.children[1];
-      field.disabled = true;
-    });
-  }
-
-  function updateProjectOptions() {
-    while (taskProject.firstChild) {
-      taskProject.removeChild(taskProject.firstChild);
-    }
-    for (const project of projects) {
-      if (
-        project.title === 'Today' ||
-        project.title === 'Next 7 days' ||
-        project.title === 'Logbook'
-      ) continue;
-      const projectOption = document.createElement('option');
-      projectOption.setAttribute('value', project.title);
-      projectOption.innerText = project.title;
-      taskProject.appendChild(projectOption);
-    }
-    const addNewProjectOption = document.createElement('option');
-    addNewProjectOption.setAttribute('value', 'add-new');
-    addNewProjectOption.innerText = '+ Add new project...';
-    taskProject.appendChild(addNewProjectOption);
-  }
-
-  return { 
-    ...Popup(), 
-    popup: overlay, 
+  return {
+    ...Popup(),
+    popup: overlay,
     toggle,
     updateProjectOptions,
   };
 }
 
-export function PopupProject() {  
+export function PopupProject() {
   const overlay = Popup().popup;
   const popup = overlay.querySelector('.popup');
   const title = popup.querySelector('h2');
   popup.setAttribute('id', 'popup-project');
   popup.appendChild(title);
-  
-  for (let i = 0; i < 3; i++) {
+
+  for (let i = 0; i < 3; i += 1) {
     const wrapper = document.createElement('li');
     popup.appendChild(wrapper);
   }
-  
+
   const listItems = popup.querySelectorAll('li');
-  
+
   const projectTitleLabel = document.createElement('label');
   const projectTitle = document.createElement('input');
   projectTitleLabel.innerText = 'Title';
@@ -280,7 +279,7 @@ export function PopupProject() {
   projectTitle.setAttribute('type', 'text');
   listItems[0].appendChild(projectTitleLabel);
   listItems[0].appendChild(projectTitle);
-  
+
   const btnsWrapper = listItems[listItems.length - 1];
   popup.appendChild(btnsWrapper);
   const btnOne = document.createElement('button');
@@ -294,28 +293,28 @@ export function PopupProject() {
   btnTwo.style.padding = '1rem 0';
   btnsWrapper.appendChild(btnOne);
   btnsWrapper.appendChild(btnTwo);
-  
+
   function toggle(mode) {
     if (mode === 'add') {
       popup.classList.add('add');
       popup.classList.remove('edit');
       title.innerText = 'Add a New Project';
-      btnTwo.innerText = 'Add project';      
+      btnTwo.innerText = 'Add project';
     } else if (mode === 'edit') {
       popup.classList.add('edit');
       popup.classList.remove('add');
       title.innerText = 'Edit Project';
-      btnTwo.innerText = 'Save';      
+      btnTwo.innerText = 'Save';
     }
   }
-  
+
   function fillTitleField(titleText) {
     projectTitle.value = titleText;
   }
-  
-  return { 
-    ...Popup(), 
-    popup: overlay, 
+
+  return {
+    ...Popup(),
+    popup: overlay,
     toggle,
     fillTitleField,
   };
@@ -327,7 +326,7 @@ export function PopupDelete() {
   const elementWrapper = element.querySelector('.popup');
   const title = element.querySelector('h2');
   elementWrapper.setAttribute('id', 'popup-delete');
-  title.innerText = "Confirm deletion";
+  title.innerText = 'Confirm deletion';
 
   const prompt = document.createElement('li');
   elementWrapper.appendChild(prompt);

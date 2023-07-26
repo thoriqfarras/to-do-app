@@ -1,48 +1,113 @@
-import Todolist from './todolist.js';
-import Storage from './storage.js';
-import Sidebar from './components/sidebar.js';
-import Main from './components/main-content.js';
-import ActionBtn from './components/actionBtn.js';
-import { PopupTask, PopupProject, PopupDelete } from './components/popup.js';
 import { format } from 'date-fns';
+import Todolist from './todolist';
+import Sidebar from './components/sidebar';
+import Main from './components/main-content';
+import ActionBtn from './components/actionBtn';
+import { PopupTask, PopupProject, PopupDelete } from './components/popup';
 import './style.css';
 
 export default function App() {
-  
-  const todolist = Todolist();  
+  const todolist = Todolist();
   const app = document.createElement('div');
   app.classList.add('app');
   document.body.appendChild(app);
 
-  let projects = todolist.projects;
+  const { projects } = todolist;
   let activeProject = projects[0];
   let projectBeingEdited = {};
   let taskDisplayed = {};
   let popupDisplayed = {};
   let markedTasks = [];
-  
+
   todolist.addTask({ title: 'mop the floor', priority: 2 });
-  todolist.addProject("Groceries");
+  todolist.addProject('Groceries');
   todolist.addTask({ title: 'mop the garage', priority: 1, project: 'Chores' });
-  
+
   const sidebar = Sidebar(projects);
-  const main = Main(activeProject);
+  const main = Main();
   const actionBtn = ActionBtn();
   const popupTask = PopupTask(projects);
   const popupProject = PopupProject();
   const popupDelete = PopupDelete();
-  
+
   app.appendChild(sidebar.sidebar);
   app.appendChild(main.main);
   app.appendChild(actionBtn.wrapper);
-  
-  sidebar.sidebar.addEventListener('click', clickHandlerSidebar);
-  main.main.addEventListener('click', clickHandlerMain);
-  actionBtn.wrapper.addEventListener('click', clickHandlerActionBtn);
-  popupTask.popup.addEventListener('click', clickHandlerTaskPopup);
-  popupProject.popup.addEventListener('click', clickHandlerPopupProject);
-  popupDelete.popup.addEventListener('click', clickHanlderDeletePopup);
-  
+  main.loadProject(activeProject);
+  sidebar.loadProjectList(projects);
+
+  // form controls
+  function getAllFormElements(source) {
+    return source.querySelectorAll('input, select, textarea');
+  }
+
+  function getAllFormValues(formElements) {
+    const obj = {};
+    formElements.forEach((element) => {
+      const key = element.id;
+      const { value } = element;
+      obj[key] = value;
+    });
+    return obj;
+  }
+
+  function resetFormFields(popup) {
+    popup.querySelectorAll('input, select, textarea').forEach((field) => {
+      if (field.type === 'select-one') {
+        field.selectedIndex = 0;
+      } else {
+        field.value = '';
+      }
+    });
+  }
+
+  function fillFormFieldsWithTaskInfo(popup, { ...taskInfo }) {
+    const statusIndicator = popup.querySelector('#task-status');
+    const titleField = popup.querySelector('#task-title');
+    const projectField = popup.querySelector('#task-project');
+    const dueField = popup.querySelector('#task-due');
+    const priorityField = popup.querySelector('#task-priority');
+    const noteField = popup.querySelector('#task-note');
+    if (statusIndicator) {
+      statusIndicator.value = taskInfo.status;
+      if (taskInfo.status === 'todo') {
+        statusIndicator.style.color = 'red';
+      } else {
+        statusIndicator.style.color = 'green';
+      }
+    }
+    titleField.value = taskInfo.title || '';
+    projectField.value = taskInfo.project || '';
+    dueField.value = taskInfo.due || '';
+    if (taskInfo.priority) {
+      priorityField.value = taskInfo.priority;
+    } else {
+      priorityField.selectedIndex = 0;
+    }
+    noteField.value = taskInfo.note || '';
+  }
+
+  function extractTaskInfo(formValues) {
+    const extracted = {};
+    Object.entries(formValues).forEach(([key]) => {
+      const newKey = key.substring(5);
+      extracted[newKey] = formValues[key];
+    });
+    return extracted;
+  }
+
+  // utilities
+  function changeProjectColor(e) {
+    const circle = e.target.previousSibling;
+    const projectName = e.target.nextSibling.innerText;
+    const project = projects.find((p) => p.title === projectName);
+    circle.style.backgroundColor = e.target.value;
+    project.edit({ color: e.target.value });
+    if (project === activeProject || activeProject.title === 'Logbook') {
+      main.loadProject(activeProject);
+    }
+  }
+
   // event handlers
   function clickHandlerSidebar(e) {
     if (e.target.id === 'toggle-sidebar') {
@@ -54,8 +119,10 @@ export default function App() {
         markedTasks = [];
       }
       const targetProjectName = e.target.querySelector('p').innerText;
-      const targetProject = projects.find(project => project.title == targetProjectName);
-      if (activeProject != targetProject) {
+      const targetProject = projects.find(
+        (project) => project.title === targetProjectName
+      );
+      if (activeProject !== targetProject) {
         if (targetProject.title === 'Today') {
           todolist.updateToday();
         } else if (targetProject.title === 'Next 7 days') {
@@ -66,7 +133,9 @@ export default function App() {
       }
     } else if (e.target.id === 'edit-proj-btn') {
       const projectNameBeingEdited = e.target.parentElement.innerText;
-      projectBeingEdited = todolist.getProjects().find(project => project.title == projectNameBeingEdited);
+      projectBeingEdited = todolist
+        .getProjects()
+        .find((project) => project.title === projectNameBeingEdited);
       popupProject.toggle('edit');
       popupProject.fillTitleField(projectNameBeingEdited);
       app.appendChild(popupProject.popup);
@@ -74,7 +143,9 @@ export default function App() {
       popupProject.popup.querySelector('input').focus();
     } else if (e.target.id === 'delete-proj-btn') {
       const projectNameBeingEdited = e.target.parentElement.innerText;
-      projectBeingEdited = todolist.getProjects().find(project => project.title == projectNameBeingEdited);
+      projectBeingEdited = todolist
+        .getProjects()
+        .find((project) => project.title === projectNameBeingEdited);
       popupDelete.setMode('project', projectBeingEdited);
       app.appendChild(popupDelete.popup);
       popupDisplayed = popupDelete.popup;
@@ -82,7 +153,7 @@ export default function App() {
       e.target.addEventListener('change', changeProjectColor);
     }
   }
-  
+
   function clickHandlerActionBtn(e) {
     if (e.target.classList.contains('plus')) {
       actionBtn.toggle();
@@ -92,14 +163,19 @@ export default function App() {
       app.appendChild(popupTask.popup);
       popupDisplayed = popupTask.popup;
       if (
-        activeProject.title === 'Logbook' || 
-        activeProject.title === "Next 7 days"
+        activeProject.title === 'Logbook' ||
+        activeProject.title === 'Next 7 days'
       ) {
         fillFormFieldsWithTaskInfo(popupTask.popup, { project: 'Inbox' });
-      } else if (activeProject.title === "Today") {
-        fillFormFieldsWithTaskInfo(popupTask.popup, { due: format(new Date(), 'yyyy-MM-dd'), project: 'Inbox' });
+      } else if (activeProject.title === 'Today') {
+        fillFormFieldsWithTaskInfo(popupTask.popup, {
+          due: format(new Date(), 'yyyy-MM-dd'),
+          project: 'Inbox',
+        });
       } else {
-        fillFormFieldsWithTaskInfo(popupTask.popup, { project: activeProject.title });
+        fillFormFieldsWithTaskInfo(popupTask.popup, {
+          project: activeProject.title,
+        });
       }
       popupTask.popup.querySelector('input').focus();
     } else if (e.target.classList.contains('project')) {
@@ -110,18 +186,21 @@ export default function App() {
       popupProject.popup.querySelector('input').focus();
     }
   }
-  
+
   function listenForPopupClose(e) {
-    if (e.target.id === 'cancel-btn' || e.target.classList.contains('overlay')) {
+    if (
+      e.target.id === 'cancel-btn' ||
+      e.target.classList.contains('overlay')
+    ) {
       popupDisplayed.remove();
       popupDisplayed = {};
     }
   }
-  
+
   function clickHandlerPopupProject(e) {
     listenForPopupClose(e);
     popupProject.clearWarningMessage();
-    let state = this.querySelector('.popup').className.replace('popup ', '');
+    const state = this.querySelector('.popup').className.replace('popup ', '');
     if (e.target.id === 'commit-btn') {
       const projectNameField = this.querySelector('input');
       if (state === 'add') {
@@ -132,23 +211,35 @@ export default function App() {
           this.remove();
           popupDisplayed = {};
         } else {
-          popupProject.loadWarningMessage(success, projectNameField, projectNameField.value);
+          popupProject.loadWarningMessage(
+            success,
+            projectNameField,
+            projectNameField.value
+          );
         }
-      } else if (state === "edit") {
-        const success = todolist.editProject(projectBeingEdited, projectNameField.value);
+      } else if (state === 'edit') {
+        const success = todolist.editProject(
+          projectBeingEdited,
+          projectNameField.value
+        );
         if (success === 1) {
           sidebar.loadProjectList(projects);
           this.remove();
           popupDisplayed = {};
-          if (activeProject === projectBeingEdited) main.loadProject(activeProject);
+          if (activeProject === projectBeingEdited)
+            main.loadProject(activeProject);
           popupTask.updateProjectOptions();
         } else {
-          popupProject.loadWarningMessage(success, projectNameField, projectNameField.value);
+          popupProject.loadWarningMessage(
+            success,
+            projectNameField,
+            projectNameField.value
+          );
         }
       }
     }
   }
-  
+
   function clickHandlerTaskPopup(e) {
     listenForPopupClose(e);
     popupTask.clearWarningMessage();
@@ -167,7 +258,10 @@ export default function App() {
           popupTask.loadWarningMessage(success, taskTitleField);
         }
       } else if (state === 'edit') {
-        const success = todolist.editTask(taskDisplayed, extractTaskInfo(formValues));
+        const success = todolist.editTask(
+          taskDisplayed,
+          extractTaskInfo(formValues)
+        );
         if (success === 1) {
           main.loadProject(activeProject);
           this.remove();
@@ -194,7 +288,7 @@ export default function App() {
       popupDisplayed = popupDelete.popup;
     }
   }
-  
+
   function clickHanlderDeletePopup(e) {
     listenForPopupClose(e);
     if (e.target.id === 'commit-btn') {
@@ -215,7 +309,7 @@ export default function App() {
       }
     }
   }
-  
+
   function clickHandlerMain(e) {
     if (e.target.classList.contains('task-item')) {
       const taskId = +e.target.dataset.id;
@@ -238,75 +332,10 @@ export default function App() {
     }
   }
 
-  // form controls  
-  function getAllFormElements(source) {
-    return source.querySelectorAll('input, select, textarea');
-  }
-  
-  function getAllFormValues(formElements) {
-    let obj = {};
-    formElements.forEach((element) => {
-      const key = element.id;
-      let value = element.value;
-      obj[key] = value;
-    });
-    return obj;
-  }
-  
-  function resetFormFields(popup) {
-    popup.querySelectorAll('input, select, textarea').forEach(field => {
-      if (field.type === 'select-one') {
-        field.selectedIndex = 0;
-      } else {
-        field.value = '';
-      }
-    });
-  }
-  
-  function fillFormFieldsWithTaskInfo(popup, { ...taskInfo }) {
-    const statusIndicator = popup.querySelector('#task-status');
-    const titleField = popup.querySelector('#task-title'); 
-    const projectField = popup.querySelector('#task-project'); 
-    const dueField = popup.querySelector('#task-due'); 
-    const priorityField = popup.querySelector('#task-priority'); 
-    const noteField = popup.querySelector('#task-note'); 
-    if (statusIndicator) {
-      statusIndicator.value = taskInfo.status;
-      if (taskInfo.status === 'todo') {
-        statusIndicator.style.color = "red";
-      } else {
-        statusIndicator.style.color = "green";
-      }
-    }
-    titleField.value = taskInfo.title || '';
-    projectField.value = taskInfo.project || '';
-    dueField.value = taskInfo.due || '';
-    if (taskInfo.priority) {
-      priorityField.value = taskInfo.priority;
-    } else {
-      priorityField.selectedIndex = 0;
-    } 
-    noteField.value = taskInfo.note || '';
-  }
-  
-  function extractTaskInfo(formValues) {
-    const extracted = {};
-    for (let [key, value] of Object.entries(formValues)) {
-      const newKey = key.substring(5);
-      extracted[newKey] = formValues[key];
-    }
-    return extracted;
-  }
-
-  // others
-  function changeProjectColor(e) {
-    const circle = e.target.previousSibling;
-    const projectName = e.target.nextSibling.innerText;
-    const project = projects.find(p => p.title === projectName);
-    circle.style.backgroundColor = e.target.value;
-    project.edit({ color: e.target.value })
-    if (project === activeProject || activeProject.title === 'Logbook') {
-      main.loadProject(activeProject);
-    }
-  }
+  sidebar.sidebar.addEventListener('click', clickHandlerSidebar);
+  main.main.addEventListener('click', clickHandlerMain);
+  actionBtn.wrapper.addEventListener('click', clickHandlerActionBtn);
+  popupTask.popup.addEventListener('click', clickHandlerTaskPopup);
+  popupProject.popup.addEventListener('click', clickHandlerPopupProject);
+  popupDelete.popup.addEventListener('click', clickHanlderDeletePopup);
 }

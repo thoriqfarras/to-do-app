@@ -1,14 +1,13 @@
 export default class Task {
-
-  constructor({ 
+  constructor({
     id,
-    title, 
-    status = 'todo', 
-    due, 
-    project = 'Inbox', 
+    title,
+    status = 'todo',
+    due,
+    project = 'Inbox',
     projectColor = 'blueviolet',
-    priority = 0, 
-    note = ''
+    priority = 0,
+    note = '',
   }) {
     this._id = id;
     this.title = title;
@@ -19,12 +18,14 @@ export default class Task {
     this.priority = priority;
     this.note = note;
   }
-  
+
   edit({ ...args }) {
-    for (const [key, value] of Object.entries({ ...args })) {
+    Object.entries({ ...args }).forEach(([key, value]) => {
       this[key] = value;
-    }
+    });
   }
 
-  getId() { return this._id };
+  getId() {
+    return this._id;
+  }
 }
