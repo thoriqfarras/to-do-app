@@ -249,6 +249,8 @@ export function PopupTask(projects) {
     }
   }
 
+  updateProjectOptions();
+
   return {
     ...Popup(),
     popup: overlay,
