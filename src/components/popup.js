@@ -172,8 +172,8 @@ export function PopupTask(projects) {
     }
     projects.forEach((project) => {
       if (
-        project.title !== 'Today' ||
-        project.title !== 'Next 7 days' ||
+        project.title !== 'Today' &&
+        project.title !== 'Next 7 days' &&
         project.title !== 'Logbook'
       ) {
         const projectOption = document.createElement('option');

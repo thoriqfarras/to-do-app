@@ -3,25 +3,52 @@ import Project from './project';
 import Task from './task';
 import Storage from './storage';
 
-let taskIdCounter = 0;
-
 export default function Todolist() {
-  const inbox = new Project('Inbox', 'blueviolet');
-  const today = new Project('Today');
-  const nextWeek = new Project('Next 7 days');
-  const logbook = new Project('Logbook');
-
   const storage = Storage();
-  const projects = storage.getItem('projects') || [
-    inbox,
-    today,
-    nextWeek,
-    logbook,
-  ];
+  let taskIdCounter = 0;
+  const restoredProjects = storage.getItem('projects');
+  const projects = [];
+  if (restoredProjects) {
+    restoredProjects.forEach((project) => {
+      addProject(project.title, project.color);
+      project._tasks.forEach((task) => {
+        if (
+          project.title !== 'Today' &&
+          project.title !== 'Next 7 days' &&
+          project.title !== 'Logbook'
+        ) {
+          addTask(task);
+        }
+      });
+    });
+  } else {
+    addProject('Inbox', 'blueviolet');
+    addProject('Today');
+    addProject('Next 7 days');
+    addProject('Logbook');
+    addTask({ title: 'mop the floor', priority: 2 });
+    addProject('Groceries');
+    addTask({ title: 'mop the garage', priority: 1, project: 'Chores' });
+  }
+
+  const today = projects[1];
+  const nextWeek = projects[2];
+  const logbook = projects[3];
 
   // getters
   function getAllTasks() {
-    return logbook.getTasks();
+    const allTasks = [];
+    projects.forEach((project) => {
+      if (
+        project.title !== 'Today' &&
+        project.title !== 'Next 7 days' &&
+        project.title !== 'Logbook'
+      )
+        project.getTasks().forEach((task) => {
+          allTasks.push(task);
+        });
+    });
+    return allTasks;
   }
 
   function getTaskById(id) {
@@ -51,6 +78,7 @@ export default function Todolist() {
     }
     const newProject = new Project(title, color);
     projects.push(newProject);
+    storage.saveItem('projects', projects);
     return 1;
   }
 
@@ -64,25 +92,27 @@ export default function Todolist() {
     }
     task.projectColor = targetProject.color;
     targetProject.addTask(task);
-    logbook.addTask(task);
     taskIdCounter += 1;
-    storage.saveItem('project', projects);
+    storage.saveItem('projects', projects);
     return 1;
   }
 
-  function editProject(project, newProjectTitle, newProjectColor = '') {
+  function editProject(project, { newTitle, newColor }) {
     if (
       getProjectTitles()
         .filter((title) => title !== project.title)
-        .includes(newProjectTitle)
+        .includes(newTitle)
     ) {
       return 0;
     }
-    if (!newProjectTitle) {
+    if (!newTitle && !newColor) {
       return -1;
     }
-    project.edit({ title: newProjectTitle, color: newProjectColor });
-    storage.saveItem('project', projects);
+    project.edit({
+      title: newTitle || project.title,
+      color: newColor || project.color,
+    });
+    storage.saveItem('projects', projects);
     return 1;
   }
 
@@ -95,16 +125,16 @@ export default function Todolist() {
       const newProject = getProjectByTitle(task.project);
       newProject.addTask(task);
       oldProject.removeTask(task);
+      task.edit({ projectColor: newProject.color });
     }
-    storage.saveItem('project', projects);
+    storage.saveItem('projects', projects);
     return 1;
   }
 
   function removeTask(task) {
     const project = getProjectByTitle(task.project);
     project.removeTask(task);
-    logbook.removeTask(task);
-    storage.saveItem('project', projects);
+    storage.saveItem('projects', projects);
   }
 
   function removeProject(project) {
@@ -112,7 +142,7 @@ export default function Todolist() {
       removeTask(task);
     });
     projects.splice(projects.indexOf(project), 1);
-    storage.saveItem('project', projects);
+    storage.saveItem('projects', projects);
   }
 
   function updateToday() {
@@ -145,6 +175,15 @@ export default function Todolist() {
     });
   }
 
+  function updateLogbook() {
+    logbook.getTasks().forEach((task) => {
+      logbook.removeTask(task);
+    });
+    getAllTasks().forEach((task) => {
+      logbook.addTask(task);
+    });
+  }
+
   function removeAllDoneTasks() {
     getAllTasks().forEach((task) => {
       if (task.status === 'done') {
@@ -168,6 +207,7 @@ export default function Todolist() {
     getTaskById,
     updateToday,
     updateNextWeek,
+    updateLogbook,
     removeAllDoneTasks,
   };
 }

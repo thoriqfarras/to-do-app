@@ -16,12 +16,9 @@ export default function App() {
   let activeProject = projects[0];
   let projectBeingEdited = {};
   let taskDisplayed = {};
+  let selectedTaskItem = {};
   let popupDisplayed = {};
   let markedTasks = [];
-
-  todolist.addTask({ title: 'mop the floor', priority: 2 });
-  todolist.addProject('Groceries');
-  todolist.addTask({ title: 'mop the garage', priority: 1, project: 'Chores' });
 
   const sidebar = Sidebar(projects);
   const main = Main();
@@ -102,7 +99,8 @@ export default function App() {
     const projectName = e.target.nextSibling.innerText;
     const project = projects.find((p) => p.title === projectName);
     circle.style.backgroundColor = e.target.value;
-    project.edit({ color: e.target.value });
+    // project.edit({ color: e.target.value });
+    todolist.editProject(project, { newColor: e.target.value });
     if (project === activeProject || activeProject.title === 'Logbook') {
       main.loadProject(activeProject);
     }
@@ -127,6 +125,8 @@ export default function App() {
           todolist.updateToday();
         } else if (targetProject.title === 'Next 7 days') {
           todolist.updateNextWeek();
+        } else if (targetProject.title === 'Logbook') {
+          todolist.updateLogbook();
         }
         activeProject = targetProject;
         main.loadProject(activeProject);
@@ -218,11 +218,13 @@ export default function App() {
           );
         }
       } else if (state === 'edit') {
-        const success = todolist.editProject(
-          projectBeingEdited,
-          projectNameField.value
-        );
+        const success = todolist.editProject(projectBeingEdited, {
+          newTitle: projectNameField.value,
+        });
         if (success === 1) {
+          if (activeProject.title === 'Logbook') {
+            main.loadProject(activeProject);
+          }
           sidebar.loadProjectList(projects);
           this.remove();
           popupDisplayed = {};
@@ -250,6 +252,9 @@ export default function App() {
       if (state === 'add') {
         const success = todolist.addTask(extractTaskInfo(formValues));
         if (success === 1) {
+          if (activeProject.title === 'Logbook') {
+            todolist.updateLogbook();
+          }
           main.loadProject(activeProject);
           this.remove();
           popupDisplayed = {};
@@ -303,6 +308,9 @@ export default function App() {
         app.removeChild(popupDisplayed);
         if (projectBeingEdited === activeProject) {
           main.loadProject(projects[0]);
+        } else if (activeProject.title === 'Logbook') {
+          todolist.updateLogbook();
+          main.loadProject(activeProject);
         }
         sidebar.loadProjectList(projects);
         projectBeingEdited = {};
@@ -314,6 +322,7 @@ export default function App() {
     if (e.target.classList.contains('task-item')) {
       const taskId = +e.target.dataset.id;
       const selectedTask = todolist.getTaskById(taskId);
+      selectedTaskItem = e.target;
       taskDisplayed = selectedTask;
       popupTask.toggle('overview');
       fillFormFieldsWithTaskInfo(popupTask.popup, selectedTask);
